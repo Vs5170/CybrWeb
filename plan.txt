@@ -1,0 +1,424 @@
+# CybrWeb - Detailed Project Blueprint
+
+## Project Overview
+- **Project Name**: CybrWeb
+- **Target Audience**: 3rd-5th graders (ages 8-11)
+- **Goal**: Educate kids about Cybersecurity Incident Responder career
+- **Tech Stack**: HTML5, CSS3, Vanilla JavaScript (ES6+)
+- **Rendering**: DOM-based (no Canvas)
+- **Theme**: Tech/Hacker Theme (Matrix-style, cybersecurity themed)
+- **Game Structure**: 5 levels, sequential unlock, click-based with timed challenges
+- **Scoring**: Star-based (1-3 stars per level based on time remaining)
+
+---
+
+## Detailed File Structure
+
+```
+CybrWeb/
+├── index.html              # Single-page application entry
+├── README.md               # Project overview (optional)
+├── plan.txt                # This blueprint
+│
+├── css/
+│   ├── main.css            # Global styles, resets, typography
+│   ├── components.css      # Reusable component styles
+│   ├── pages.css           # Page-specific styles
+│   ├── game.css            # Game-specific styles
+│   └── theme.css           # Tech/hacker theme variables
+│
+├── js/
+│   ├── app.js              # Main application controller
+│   ├── navigation.js        # SPA navigation logic
+│   ├── state.js             # Global state management
+│   │
+│   ├── game/
+│   │   ├── game.js          # Game engine (state machine)
+│   │   ├── game-states.js   # State enum: INIT, PLAYING, PAUSED, GAMEOVER, VICTORY
+│   │   ├── game-loop.js     # Timer management (NOT render loop - DOM-based)
+│   │   ├── levels.js        # Level configuration data
+│   │   ├── scoring.js       # Star calculation logic
+│   │   └── components/      # Game UI components
+│   │       ├── level-selector.js
+│   │       ├── game-board.js
+│   │       ├── timer-display.js
+│   │       ├── threat-monitor.js
+│   │       └── action-panel.js
+│   │
+│   ├── learn/
+│   │   ├── learn.js         # Learn section controller
+│   │   ├── topics.js        # Educational content data
+│   │   ├── quiz.js          # Quiz engine (True/False + Multiple Choice)
+│   │   └── progress.js     # Learning progress tracking
+│   │
+│   └── utils/
+│       ├── dom.js           # DOM manipulation helpers
+│       ├── storage.js       # LocalStorage for progress
+│       └── audio.js         # Sound effects (optional)
+│
+├── assets/
+│   ├── icons/              # SVG icons (shield, lock, hacker, etc.)
+│   ├── images/             # Backgrounds, illustrations
+│   └── sounds/             # SFX (optional)
+│
+└── data/
+    ├── levels.json         # Level definitions (optional - can be JS)
+    ├── questions.json      # Quiz questions bank
+    └── topics.json         # Educational topics content
+```
+
+---
+
+## Core Game States (State Machine)
+
+```javascript
+const GameState = {
+    INIT: 'INIT',           // Initial state, showing level select
+    LOADING: 'LOADING',     // Loading level assets/data
+    PLAYING: 'PLAYING',     // Active gameplay
+    PAUSED: 'PAUSED',       // Game paused (optional)
+    GAMEOVER: 'GAMEOVER',   // Time ran out / failed
+    VICTORY: 'VICTORY',     // Level completed successfully
+    TRANSITION: 'TRANSITION' // Between levels
+};
+```
+
+### State Transitions
+```
+[INIT] --select_level--> [LOADING] --load_complete--> [PLAYING]
+[PLAYING] --timeout/fail--> [GAMEOVER]
+[PLAYING] --success--> [VICTORY]
+[GAMEOVER] --retry--> [LOADING]
+[VICTORY] --next_level--> [LOADING] OR --menu--> [INIT]
+```
+
+---
+
+## Game Timer Loop (DOM-Based - NOT Canvas)
+
+Since this is DOM-based (not Canvas), we use a `setInterval` timer for the countdown, not a delta-time render loop.
+
+```javascript
+class GameLoop {
+    constructor(durationSeconds, onTick, onComplete) {
+        this.duration = durationSeconds;
+        this.timeRemaining = durationSeconds;
+        this.onTick = onTick;       // Called every second
+        this.onComplete = onComplete;
+        this.intervalId = null;
+        this.state = 'STOPPED';
+    }
+
+    start() {
+        this.state = 'RUNNING';
+        this.intervalId = setInterval(() => {
+            this.timeRemaining--;
+            this.onTick(this.timeRemaining, this.getProgress());
+
+            if (this.timeRemaining <= 0) {
+                this.stop();
+                this.onComplete();
+            }
+        }, 1000);
+    }
+
+    pause() {
+        this.state = 'PAUSED';
+        clearInterval(this.intervalId);
+    }
+
+    resume() {
+        if (this.state === 'PAUSED') {
+            this.start();
+        }
+    }
+
+    stop() {
+        this.state = 'STOPPED';
+        clearInterval(this.intervalId);
+    }
+
+    getProgress() {
+        return (this.duration - this.timeRemaining) / this.duration;
+    }
+}
+```
+
+---
+
+## Level-by-Level Game Mechanics
+
+### Level 1: THREAT DETECTION
+**Objective**: Identify which computer is infected
+**Mechanic**: Show 4 computers, one has a "virus" icon. Player clicks the infected one.
+**Win Condition**: Click correct computer within 60 seconds
+**Fail Condition**: Click wrong computer 3 times OR timer runs out
+**Scoring**:
+- 3 stars: Complete with 40+ seconds left
+- 2 stars: Complete with 20-39 seconds left
+- 1 star: Complete with < 20 seconds left
+**Educational Connection**: Teaches "detection" - first step of incident response
+
+### Level 2: ISOLATION
+**Objective**: Quarantine the infected computer from the network
+**Mechanic**: Click network segments to disconnect them from the infected node. Must isolate before virus spreads to all 6 nodes.
+**Win Condition**: Isolate infected computer before 3+ others are infected
+**Fail Condition**: 3 computers become infected OR timer runs out
+**Educational Connection**: Teaches "isolation" - containing the threat
+
+### Level 3: TRAFFIC BLOCKING
+**Objective**: Identify and block suspicious incoming traffic
+**Mechanic**: Show incoming data packets with "safe" (green) or "suspicious" (red) patterns. Click suspicious ones to block. Must get 10 correct blocks.
+**Win Condition**: Block 10 suspicious packets
+**Fail Condition**: Let 5 suspicious packets through OR timer runs out
+**Educational Connection**: Teaches "blocking" - stopping malicious traffic
+
+### Level 4: THREAT ANALYSIS
+**Objective**: Find the source of the attack
+**Mechanic**: Show a "log file" with entries. Player must find the anomaly (unusual time, suspicious IP, etc.). 4 log entries shown, one is the clue.
+**Win Condition**: Correctly identify the source entry
+**Fail Condition**: Choose wrong entry 2 times OR timer runs out
+**Educational Connection**: Teaches "analysis" - investigating the root cause
+
+### Level 5: RECOVERY
+**Objective**: Restore systems from backup
+**Mechanic**: Show 5 "file folders" - must click them in correct order: oldest backup first, newest last. Show timestamps to guide.
+**Win Condition**: Restore all files in correct sequence
+**Fail Condition**: Click 2 files in wrong order OR timer runs out
+**Educational Connection**: Teaches "recovery" - restoring from backups
+
+---
+
+## Educational Content Structure
+
+### Learn Section Topics (4 Core Topics)
+
+**Topic 1: What is a Cyber Attack?**
+- Kid-friendly definition
+- Real-world analogy (like a bully trying to break into your locker)
+- Visuals: Hacker icon, lock icon
+- Quiz: 2 True/False + 2 Multiple Choice
+
+**Topic 2: What does an Incident Responder do?**
+- Role breakdown: Detect, Isolate, Block, Analyze, Recover
+- Visuals: Shield, computer icons
+- Real example: "Like a digital doctor"
+- Quiz: 2 True/False + 2 Multiple Choice
+
+**Topic 3: Staying Safe Online**
+- Passwords: Create strong passwords
+- Backups: Why they matter
+- Suspicious links: Don't click unknown links
+- Visuals: Lock, cloud backup, warning sign
+- Quiz: 2 True/False + 2 Multiple Choice
+
+**Topic 4: Inside an Incident Response Team**
+- Team roles overview
+- Tools they use
+- Career pathway
+- Visuals: Team, tools icons
+- Quiz: 2 True/False + 2 Multiple Choice
+
+### Quiz Question Paradigms (3rd-5th Grade Level)
+
+**True/False Examples**:
+1. "Hackers always wear black hoodies like in movies." (False)
+2. "Backing up your files helps keep them safe." (True)
+3. "A strong password should have letters, numbers, and symbols." (True)
+4. "You should click on links in emails from strangers." (False)
+
+**Multiple Choice Examples**:
+1. "What is the FIRST thing an Incident Responder does when there's a cyber attack?"
+   - A) Deletes everything
+   - B) Tells everyone on social media
+   - C) Finds out what's happening (Correct)
+   - D) Turns off the computer
+
+2. "If you see a weird pop-up asking for your password, what should you do?"
+   - A) Type your password quickly
+   - B) Ignore it and tell an adult (Correct)
+   - C) Share it with friends
+   - D) Click yes to see what happens
+
+3. "What does 'isolating' a computer mean?"
+   - A) Putting it in a box
+   - B) Disconnecting it from the network (Correct)
+   - C) Painting it a different color
+   - D) Making it run faster
+
+---
+
+## UI/UX Design Specification
+
+### Color Palette (Tech/Hacker Theme)
+```css
+:root {
+    /* Primary */
+    --bg-dark: #0d1117;
+    --bg-panel: #161b22;
+    --accent-green: #00ff41;
+    --accent-cyan: #00d4ff;
+    --accent-orange: #ff9500;
+
+    /* Text */
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-accent: #00ff41;
+
+    /* Status */
+    --success: #3fb950;
+    --warning: #d29922;
+    --danger: #f85149;
+
+    /* Game */
+    --threat-red: #ff4444;
+    --safe-green: #44ff44;
+    --neutral-blue: #4488ff;
+}
+```
+
+### Typography
+- Primary Font: "JetBrains Mono" (monospace, techy) or "Fira Code"
+- Fallback: "Courier New", monospace
+- Headings: Bold, uppercase, letter-spacing: 2px
+- Body: 16px base size, readable line-height: 1.6
+
+### Layout Structure
+```
++------------------------------------------+
+|  HEADER (Logo + Nav)                      |
++------------------------------------------+
+|                                           |
+|  MAIN CONTENT AREA                        |
+|  (Switches between: Home/Learn/Game)     |
+|                                           |
+|                                           |
++------------------------------------------+
+|  FOOTER (Credits)                         |
++------------------------------------------+
+```
+
+### Navigation
+- 3 tabs: HOME | LEARN | PLAY GAME
+- Active tab: highlighted with accent color
+- Smooth transitions between sections
+
+### Game UI Components
+```
++------------------------------------------+
+|  LEVEL 3/5  |  [===PROGRESS===]  |  ★★☆  |
++------------------------------------------+
+|                                          |
+|   +--------+   +--------+   +--------+   |
+|   |  TIMER |   | SCORE  |   | THREAT |   |
+|   |  0:45  |   |   12   |   |  ████  |   |
+|   +--------+   +--------+   +--------+   |
+|                                          |
+|           [GAME BOARD AREA]              |
+|                                          |
+|   +----------------------------------+   |
+|   |        ACTION BUTTONS            |   |
+|   +----------------------------------+   |
++------------------------------------------+
+```
+
+---
+
+## State Management
+
+```javascript
+const AppState = {
+    currentPage: 'home',       // home | learn | game
+    learn: {
+        currentTopic: 0,
+        topicProgress: [false, false, false, false],
+        quizAnswers: []
+    },
+    game: {
+        unlockedLevel: 1,
+        currentLevel: null,
+        gameState: 'INIT',
+        scores: {},            // levelId -> { stars, time }
+        highScore: 0
+    }
+};
+
+// Persist to localStorage
+function saveProgress() {
+    localStorage.setItem('cybrweb_progress', JSON.stringify(AppState));
+}
+
+function loadProgress() {
+    const saved = localStorage.getItem('cybrweb_progress');
+    if (saved) Object.assign(AppState, JSON.parse(saved));
+}
+```
+
+---
+
+## Implementation Phases
+
+### Phase 1: Foundation (Day 1)
+- [ ] Set up project structure (folders)
+- [ ] Create index.html with all sections
+- [ ] Implement theme.css with CSS variables
+- [ ] Set up basic CSS reset and typography
+- [ ] Create navigation component
+
+### Phase 2: Home & Learn Pages (Day 2)
+- [ ] Build Home page (landing, intro)
+- [ ] Create Learn topic cards
+- [ ] Implement quiz engine (True/False + Multiple Choice)
+- [ ] Add progress tracking
+- [ ] Style with tech theme
+
+### Phase 3: Game Engine (Day 3-4)
+- [ ] Implement state machine (game-states.js)
+- [ ] Create GameLoop class (timer)
+- [ ] Build level selector UI
+- [ ] Implement Level 1 (Detection)
+- [ ] Implement Level 2 (Isolation)
+- [ ] Test and debug
+
+### Phase 4: Remaining Levels (Day 5)
+- [ ] Implement Level 3 (Traffic Blocking)
+- [ ] Implement Level 4 (Threat Analysis)
+- [ ] Implement Level 5 (Recovery)
+- [ ] Add scoring/star system
+- [ ] Implement level unlock progression
+
+### Phase 5: Polish (Day 6)
+- [ ] Add animations and transitions
+- [ ] Mobile responsive styling
+- [ ] Sound effects (optional)
+- [ ] Final testing
+- [ ] Bug fixes
+
+---
+
+## Key Technical Decisions
+
+1. **SPA Architecture**: Single index.html with section visibility toggling (no page reloads)
+
+2. **DOM vs Canvas**: DOM-based for easier styling, accessibility, and simpler code for educational content
+
+3. **No Framework**: Pure vanilla JS to keep it simple and educational
+
+4. **LocalStorage**: Save progress between sessions without backend
+
+5. **Modular JS**: Separate files for game, learn, and utilities
+
+6. **Progressive Disclosure**: Level select shows only unlocked levels initially
+
+---
+
+## Success Criteria
+
+1. All 5 levels playable and winnable
+2. Timer countdown works correctly
+3. Star scoring calculates correctly based on time
+4. Learn section has 4 topics with quizzes
+5. Progress saves to localStorage
+6. Responsive on tablet/laptop (mobile optional)
+7. Tech/hacker theme consistently applied
+8. Kid-friendly language throughout (no jargon without explanation)

@@ -1,0 +1,11 @@
+You are making a project to educate 3rd-5th graders on the career, Cybersecurity Incident Responder. THe information is below. 
+
+Kid-friendly Description:
+An emergency responder who rushes to stop active cyberattacks and hacker threats.
+
+Daily Tasks Synopsis:
+You will isolate infected computers, block suspicious web traffic, and restore safely backed-up files during crises.
+
+This project is a website that educates these 3rd-5th graders on this career, cybersecurity incident responder. This website needs to have an interactive component, which is a game. 
+This game is where the kids play a level-based game where they are playing the role of a cybersecurity incident responder and need to help neutralize a threat. 
+This website shoudl also educate kids on how the career works and should have a polished UI. The langauges used to code the website is HTML and JavaScript. 

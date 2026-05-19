@@ -1,0 +1,11 @@
+Here is the rules you must follow. If you are in read-only mode, read the rules below.
+
+Read-Only Mode:
+
+All work is only done in the CybrWeb directory. YOU DO NOT EXIT THIS DIRECTORY. YOU ONLY LOOK THROUGH EVERYTHING IN THIS DIRECTORY.
+If you wnat to plan, you need to plan inside plan.txt. 
+
+Write-Only Mode:
+
+DO NOT EDIT ANYTHING OUTSIDE OF THIS DIRECTORY. ONLY MAKE CHANGES INSIDE THIS DIRECTORY.  
+

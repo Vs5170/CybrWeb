@@ -1,0 +1,665 @@
+/* === GAME BOARD ELEMENTS === */
+.game-board-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+}
+
+.game-board-grid.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.game-board-grid.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.game-board-grid.grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* === COMPUTER NODES (Level 1: Threat Detection) === */
+.computer-node {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(0, 255, 65, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.computer-node:hover {
+    border-color: var(--accent-cyan);
+    background-color: rgba(0, 212, 255, 0.05);
+    transform: scale(1.02);
+}
+
+.computer-node.selected {
+    border-color: var(--accent-green);
+    box-shadow: var(--shadow-glow);
+}
+
+.computer-node.infected {
+    border-color: var(--threat-red);
+    animation: infected-pulse 2s infinite;
+}
+
+.computer-node.isolated {
+    border-color: var(--warning);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.computer-node .node-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.computer-node .node-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.computer-node .node-status {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.25rem;
+}
+
+@keyframes infected-pulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 68, 68, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(255, 68, 68, 0.6); }
+}
+
+/* === NETWORK NODES (Level 2: Isolation) === */
+.network-node {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(68, 136, 255, 0.3);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.network-node:hover:not(.disconnected):not(.infected) {
+    border-color: var(--accent-cyan);
+    background-color: rgba(0, 212, 255, 0.05);
+}
+
+.network-node.disconnected {
+    border-color: var(--text-muted);
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.network-node.infected {
+    border-color: var(--threat-red);
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+.network-node .connection-line {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(68, 136, 255, 0.3);
+    top: 50%;
+    right: -1rem;
+    width: 1rem;
+    transition: all var(--transition-normal);
+}
+
+.network-node.disconnected .connection-line {
+    background-color: var(--text-muted);
+    opacity: 0.2;
+}
+
+.network-node .node-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.network-node .node-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* === DATA PACKETS (Level 3: Traffic Blocking) === */
+.packet-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.data-packet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.data-packet:hover {
+    background-color: rgba(0, 212, 255, 0.05);
+    border-color: var(--accent-cyan);
+}
+
+.data-packet.blocked {
+    background-color: rgba(248, 81, 73, 0.1);
+    border-color: var(--danger);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.data-packet.allowed {
+    background-color: rgba(63, 185, 80, 0.1);
+    border-color: var(--success);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.packet-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.packet-icon {
+    font-size: 1.25rem;
+}
+
+.packet-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.packet-source {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    font-family: monospace;
+}
+
+.packet-type {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.packet-action {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.packet-action.block {
+    background-color: rgba(248, 81, 73, 0.2);
+    color: var(--danger);
+}
+
+.packet-action.allow {
+    background-color: rgba(63, 185, 80, 0.2);
+    color: var(--success);
+}
+
+/* === LOG ENTRIES (Level 4: Threat Analysis) === */
+.log-file {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    font-family: 'Courier New', monospace;
+    width: 100%;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+}
+
+.log-header h4 {
+    color: var(--accent-green);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.log-status {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.log-entry {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid rgba(0, 255, 65, 0.2);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.log-entry:hover {
+    background-color: rgba(0, 255, 65, 0.05);
+    border-left-color: var(--accent-green);
+}
+
+.log-entry.selected {
+    background-color: rgba(0, 212, 255, 0.1);
+    border-left-color: var(--accent-cyan);
+}
+
+.log-entry.anomaly {
+    border-left-color: var(--danger);
+}
+
+.log-entry .log-timestamp {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    margin-bottom: 0.25rem;
+}
+
+.log-entry .log-message {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.log-entry .log-ip {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* === BACKUP FOLDERS (Level 5: Recovery) === */
+.backup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    width: 100%;
+}
+
+.backup-folder {
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 2px solid rgba(255, 149, 0, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.backup-folder:hover:not(.restored):not(.incorrect) {
+    border-color: var(--accent-orange);
+    background-color: rgba(255, 149, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.backup-folder.restored {
+    border-color: var(--success);
+    background-color: rgba(63, 185, 80, 0.1);
+    cursor: not-allowed;
+}
+
+.backup-folder.incorrect {
+    border-color: var(--danger);
+    background-color: rgba(248, 81, 73, 0.1);
+    animation: shake 0.5s;
+}
+
+.backup-folder .folder-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.backup-folder .folder-name {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.backup-folder .folder-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
+.backup-folder .folder-order {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--accent-orange);
+    color: var(--bg-dark);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* === THREAT MONITOR === */
+.threat-monitor {
+    background-color: var(--bg-panel);
+    border: 1px solid rgba(255, 68, 68, 0.2);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.threat-monitor h4 {
+    color: var(--threat-red);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+}
+
+.threat-level {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.threat-bar {
+    flex: 1;
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.threat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--safe-green), var(--warning), var(--threat-red));
+    border-radius: 4px;
+    transition: width var(--transition-normal);
+}
+
+.threat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* === ACTION PANEL BUTTONS === */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.action-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.action-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.action-btn.detect {
+    background-color: rgba(0, 212, 255, 0.1);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+}
+
+.action-btn.detect:hover:not(:disabled) {
+    background-color: rgba(0, 212, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+.action-btn.isolate {
+    background-color: rgba(255, 149, 0, 0.1);
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+
+.action-btn.isolate:hover:not(:disabled) {
+    background-color: rgba(255, 149, 0, 0.2);
+    box-shadow: 0 0 15px rgba(255, 149, 0, 0.3);
+}
+
+.action-btn.block {
+    background-color: rgba(248, 81, 73, 0.1);
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.action-btn.block:hover:not(:disabled) {
+    background-color: rgba(248, 81, 73, 0.2);
+    box-shadow: 0 0 15px rgba(248, 81, 73, 0.3);
+}
+
+.action-btn.analyze {
+    background-color: rgba(139, 92, 246, 0.1);
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+}
+
+.action-btn.analyze:hover:not(:disabled) {
+    background-color: rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+.action-btn.recover {
+    background-color: rgba(63, 185, 80, 0.1);
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.action-btn.recover:hover:not(:disabled) {
+    background-color: rgba(63, 185, 80, 0.2);
+    box-shadow: 0 0 15px rgba(63, 185, 80, 0.3);
+}
+
+/* === GAME PROGRESS BAR === */
+.game-progress {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    margin: 1rem 0;
+    overflow: hidden;
+}
+
+.game-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+    border-radius: 2px;
+    transition: width var(--transition-normal);
+}
+
+/* === LEVEL INTRO SCREEN === */
+.level-intro {
+    text-align: center;
+    padding: 2rem;
+}
+
+.level-intro .level-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 255, 65, 0.1);
+    border: 1px solid var(--accent-green);
+    border-radius: var(--radius-md);
+    color: var(--accent-green);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.level-intro h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.level-intro p {
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.6;
+}
+
+.level-intro .objective {
+    background-color: rgba(0, 212, 255, 0.05);
+    border-left: 3px solid var(--accent-cyan);
+    padding: 0.75rem 1rem;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 1rem auto;
+    max-width: 400px;
+    text-align: left;
+}
+
+.level-intro .objective strong {
+    color: var(--accent-cyan);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* === GAME FEEDBACK MESSAGES === */
+.game-feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem 2rem;
+    border-radius: var(--radius-lg);
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    z-index: 1000;
+    animation: feedback-pop 0.5s ease forwards;
+    pointer-events: none;
+}
+
+.game-feedback.correct {
+    background-color: rgba(63, 185, 80, 0.9);
+    color: var(--bg-dark);
+    box-shadow: 0 0 30px rgba(63, 185, 80, 0.5);
+}
+
+.game-feedback.incorrect {
+    background-color: rgba(248, 81, 73, 0.9);
+    color: var(--bg-dark);
+    box-shadow: 0 0 30px rgba(248, 81, 73, 0.5);
+}
+
+@keyframes feedback-pop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* === GAME STATE TRANSITIONS === */
+.game-state-transition {
+    position: fixed;
+    inset: 0;
+    background-color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    animation: fade-in-out 1s ease forwards;
+}
+
+@keyframes fade-in-out {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* === RESPONSIVE GAME ELEMENTS === */
+@media (max-width: 768px) {
+    .game-board-grid.grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .computer-node .node-icon {
+        font-size: 2rem;
+    }
+
+    .network-node {
+        padding: 0.75rem;
+    }
+
+    .network-node .node-icon {
+        font-size: 1.5rem;
+    }
+
+    .backup-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-board-grid.grid-4,
+    .game-board-grid.grid-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .backup-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .log-file {
+        padding: 1rem;
+    }
+
+    .packet-stream {
+        max-height: 300px;
+    }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CybrWeb - Cybersecurity Incident Responder</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+    <div id="app">
+        <header id="header">
+            <div class="logo">
+                <span class="logo-icon">&#x1F6E1;</span>
+                <span class="logo-text">Cybr<span class="accent">Web</span></span>
+            </div>
+            <nav id="nav">
+                <button class="nav-tab active" data-page="home">Home</button>
+                <button class="nav-tab" data-page="learn">Learn</button>
+                <button class="nav-tab" data-page="game">Play Game</button>
+            </nav>
+        </header>
+
+        <main id="main">
+            <section id="home" class="page active">
+                <div class="hero">
+                    <h1 class="hero-title">Become a <span class="accent">Cybersecurity Incident Responder</span></h1>
+                    <p class="hero-subtitle">Learn how digital heroes protect computers from hackers!</p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary" data-navigate="learn">Start Learning</button>
+                        <button class="btn btn-secondary" data-navigate="game">Play Game</button>
+                    </div>
+                </div>
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F50D;</div>
+                        <h3>Detect Threats</h3>
+                        <p>Find viruses and hackers hiding in computers</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F6E1;</div>
+                        <h3>Stop Attacks</h3>
+                        <p>Block bad traffic and protect networks</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">&#x1F4BB;</div>
+                        <h3>Save Systems</h3>
+                        <p>Recover files and fix broken computers</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="learn" class="page">
+                <div class="learn-header">
+                    <h2>Learn About Cybersecurity</h2>
+                    <p>Choose a topic to start learning!</p>
+                </div>
+                <div id="topics-container" class="topics-grid"></div>
+                <div id="topic-view" class="topic-view hidden">
+                    <button class="btn btn-back" id="back-to-topics">&larr; Back to Topics</button>
+                    <div id="topic-content"></div>
+                    <div id="topic-quiz"></div>
+                </div>
+            </section>
+
+            <section id="game" class="page">
+                <div id="game-level-select">
+                    <h2>Select a Level</h2>
+                    <div id="levels-container" class="levels-grid"></div>
+                </div>
+                <div id="game-play" class="hidden">
+                    <div class="game-hud">
+                        <div class="hud-item">
+                            <span class="hud-label">Level</span>
+                            <span class="hud-value" id="hud-level">1/5</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">Timer</span>
+                            <span class="hud-value" id="hud-timer">60</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">Score</span>
+                            <span class="hud-value" id="hud-score">0</span>
+                        </div>
+                        <div class="hud-item">
+                            <span class="hud-label">Stars</span>
+                            <span class="hud-value" id="hud-stars">☆☆☆</span>
+                        </div>
+                    </div>
+                    <div id="game-board"></div>
+                    <div id="action-panel"></div>
+                </div>
+                <div id="game-modal" class="modal hidden">
+                    <div class="modal-content">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-message"></p>
+                        <div id="modal-stars"></div>
+                        <div class="modal-actions">
+                            <button class="btn btn-primary" id="modal-retry" style="display: none;">Try Again</button>
+                            <button class="btn btn-primary" id="modal-next" style="display: none;">Next Level</button>
+                            <button class="btn btn-secondary" id="modal-menu">Back to Menu</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer id="footer">
+            <p>CybrWeb &copy; 2026 | Learn. Play. Protect.</p>
+        </footer>
+    </div>
+
+    <script src="js/utils/dom.js"></script>
+    <script src="js/utils/storage.js"></script>
+    <script src="js/utils/audio.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/game/game-states.js"></script>
+    <script src="js/game/game-loop.js"></script>
+    <script src="js/game/levels.js"></script>
+    <script src="js/game/scoring.js"></script>
+    <script src="js/game/components/level-selector.js"></script>
+    <script src="js/game/components/game-board.js"></script>
+    <script src="js/game/components/timer-display.js"></script>
+    <script src="js/game/components/threat-monitor.js"></script>
+    <script src="js/game/components/action-panel.js"></script>
+    <script src="js/game/game.js"></script>
+    <script src="js/learn/topics.js"></script>
+    <script src="js/learn/quiz.js"></script>
+    <script src="js/learn/progress.js"></script>
+    <script src="js/learn/learn.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

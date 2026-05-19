@@ -1,0 +1,49 @@
+:root {
+    /* Primary Colors */
+    --bg-dark: #0d1117;
+    --bg-panel: #161b22;
+
+    /* Accent Colors */
+    --accent-green: #00ff41;
+    --accent-cyan: #00d4ff;
+    --accent-orange: #ff9500;
+
+    /* Text Colors */
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-accent: #00ff41;
+
+    /* Status Colors */
+    --success: #3fb950;
+    --warning: #d29922;
+    --danger: #f85149;
+
+    /* Game Colors */
+    --threat-red: #ff4444;
+    --safe-green: #44ff44;
+    --neutral-blue: #4488ff;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Shadows */
+    --shadow-glow: 0 0 10px rgba(0, 255, 65, 0.3);
+    --shadow-glow-lg: 0 0 20px rgba(0, 255, 65, 0.5);
+    --shadow-panel: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
