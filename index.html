@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CybrWeb - Cybersecurity Incident Responder</title>
-    <link rel="stylesheet" href="css/theme.css">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/pages.css">
-    <link rel="stylesheet" href="css/game.css">
-    <link rel="stylesheet" href="css/elite-theme.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="app">
         <header id="header">
             <div class="logo">
-                <span class="logo-icon">&#x1F6E1;</span>
+                <i data-lucide="shield-check"></i>
                 <span class="logo-text">Cybr<span class="accent">Web</span></span>
             </div>
             <nav id="nav">
@@ -37,17 +36,17 @@
                 </div>
                 <div class="features">
                     <div class="feature-card">
-                        <div class="feature-icon">&#x1F50D;</div>
+                        <div class="feature-icon"><i data-lucide="search"></i></div>
                         <h3>Detect Threats</h3>
                         <p>Find viruses and hackers hiding in computers</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">&#x1F6E1;</div>
+                        <div class="feature-icon"><i data-lucide="shield"></i></div>
                         <h3>Stop Attacks</h3>
                         <p>Block bad traffic and protect networks</p>
                     </div>
                     <div class="feature-card">
-                        <div class="feature-icon">&#x1F4BB;</div>
+                        <div class="feature-icon"><i data-lucide="monitor-check"></i></div>
                         <h3>Save Systems</h3>
                         <p>Recover files and fix broken computers</p>
                     </div>
@@ -61,47 +60,90 @@
                 </div>
                 <div id="topics-container" class="topics-grid"></div>
                 <div id="topic-view" class="topic-view hidden">
-                    <button class="btn btn-back" id="back-to-topics">&larr; Back to Topics</button>
+                    <button class="btn btn-back" id="back-to-topics">Back to Topics</button>
                     <div id="topic-content"></div>
                     <div id="topic-quiz"></div>
                 </div>
             </section>
 
             <section id="game" class="page">
-                <div id="game-level-select">
-                    <h2>Select a Level</h2>
-                    <div id="levels-container" class="levels-grid"></div>
+                <div id="game-briefing">
+                    <div class="briefing-alert">
+                        <div class="alert-icon"><i data-lucide="alert-triangle"></i></div>
+                        <h2>NETWORK BREACH DETECTED</h2>
+                        <p class="briefing-scenario">A computer on the network has been hacked. You've been called in as the <strong>Cybersecurity Incident Responder</strong>. Follow the 5 steps of incident response to secure the system and save the data!</p>
+                    </div>
+                    <div class="briefing-instructions">
+                        <h3>How to Play</h3>
+                        <div class="instruction-steps">
+                            <div class="instruction-step">
+                                <span class="step-number">1</span>
+                                <div><strong>DETECT</strong> — Find the infected computer. Look for subtle warning signs!</div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">2</span>
+                                <div><strong>ISOLATE</strong> — Disconnect the infected computer from the network before the threat spreads.</div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">3</span>
+                                <div><strong>BLOCK</strong> — Click suspicious data packets to block them. Don't block safe traffic!</div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">4</span>
+                                <div><strong>ANALYZE</strong> — Search through system logs to find the attack source. Read carefully!</div>
+                            </div>
+                            <div class="instruction-step">
+                                <span class="step-number">5</span>
+                                <div><strong>RECOVER</strong> — Restore files from backups in the correct order (oldest first).</div>
+                            </div>
+                        </div>
+                        <p class="instruction-tip">Tip: Choose your difficulty. Harder modes give less time and trickier clues!</p>
+                    </div>
+                    <div class="briefing-difficulty">
+                        <h3>Choose Difficulty</h3>
+                        <div id="difficulty-container" class="difficulty-grid"></div>
+                    </div>
                 </div>
                 <div id="game-play" class="hidden">
-                    <div class="game-hud">
-                        <div class="hud-item">
-                            <span class="hud-label">Level</span>
-                            <span class="hud-value" id="hud-level">1/5</span>
+                    <header class="soc-topbar">
+                        <div class="game-hud">
+                            <div class="hud-item">
+                                <i data-lucide="layers" class="hud-icon"></i>
+                                <span class="hud-label">Stage</span>
+                                <span class="hud-value" id="hud-stage">1/5</span>
+                            </div>
+                            <div class="hud-item">
+                                <i data-lucide="timer" class="hud-icon"></i>
+                                <span class="hud-label">Timer</span>
+                                <span class="hud-value" id="hud-timer">60</span>
+                            </div>
+                            <div class="hud-item">
+                                <i data-lucide="alert-circle" class="hud-icon"></i>
+                                <span class="hud-label">Mistakes</span>
+                                <span class="hud-value" id="hud-mistakes">0/3</span>
+                            </div>
+                            <div class="hud-item">
+                                <i data-lucide="zap" class="hud-icon"></i>
+                                <span class="hud-label">Score</span>
+                                <span class="hud-value" id="hud-score">0</span>
+                            </div>
                         </div>
-                        <div class="hud-item">
-                            <span class="hud-label">Timer</span>
-                            <span class="hud-value" id="hud-timer">60</span>
-                        </div>
-                        <div class="hud-item">
-                            <span class="hud-label">Score</span>
-                            <span class="hud-value" id="hud-score">0</span>
-                        </div>
-                        <div class="hud-item">
-                            <span class="hud-label">Stars</span>
-                            <span class="hud-value" id="hud-stars">☆☆☆</span>
-                        </div>
-                    </div>
-                    <div id="game-board"></div>
-                    <div id="action-panel"></div>
+                    </header>
+                    <aside class="soc-sidebar">
+                        <div id="action-panel"></div>
+                    </aside>
+                    <main class="soc-workspace">
+                        <div id="game-board"></div>
+                    </main>
                 </div>
                 <div id="game-modal" class="modal hidden">
                     <div class="modal-content">
                         <h2 id="modal-title"></h2>
                         <p id="modal-message"></p>
                         <div id="modal-stars"></div>
+                        <div id="modal-stats"></div>
                         <div class="modal-actions">
                             <button class="btn btn-primary" id="modal-retry" style="display: none;">Try Again</button>
-                            <button class="btn btn-primary" id="modal-next" style="display: none;">Next Level</button>
                             <button class="btn btn-secondary" id="modal-menu">Back to Menu</button>
                         </div>
                     </div>
@@ -119,11 +161,11 @@
     <script src="js/utils/audio.js"></script>
     <script src="js/state.js"></script>
     <script src="js/navigation.js"></script>
+    <script src="js/game/difficulty.js"></script>
+    <script src="js/game/components/difficulty-selector.js"></script>
     <script src="js/game/game-states.js"></script>
     <script src="js/game/game-loop.js"></script>
-    <script src="js/game/levels.js"></script>
     <script src="js/game/scoring.js"></script>
-    <script src="js/game/components/level-selector.js"></script>
     <script src="js/game/components/game-board.js"></script>
     <script src="js/game/components/timer-display.js"></script>
     <script src="js/game/components/threat-monitor.js"></script>
@@ -134,5 +176,8 @@
     <script src="js/learn/progress.js"></script>
     <script src="js/learn/learn.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
+    </script>
 </body>
 </html>
