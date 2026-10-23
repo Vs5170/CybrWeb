@@ -6,53 +6,459 @@
     <title>CybrWeb - Cybersecurity Incident Responder</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.js"></script>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+/* ============================================================
+   CybrWeb — Command Center Theme (Layered Mechanics & Ranks)
+   ============================================================ */
+
+:root {
+    --bg: 230 25% 6%;
+    --card: 230 20% 10%;
+    --card-hover: 230 20% 12%;
+    --border: 230 30% 20%;
+    --border-hover: 230 40% 30%;
+
+    --accent: 199 89% 48%; /* Cyan Glow */
+    --accent-hover: 199 89% 55%;
+    --accent-muted: 199 89% 48% / 0.1;
+
+    --text-primary: 0 0% 98%;
+    --text-secondary: 240 5% 75%;
+    --text-muted: 240 4% 46%;
+
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+    --danger-muted: 0 84% 60% / 0.1;
+    --success: 142 70% 50%;
+    --success-muted: 142 70% 50% / 0.1;
+    --purple: 271 81% 70%;
+
+    --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Roboto Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: var(--font-ui); background: hsl(var(--bg)); color: hsl(var(--text-primary));
+    min-height: 100vh; overflow-x: hidden; line-height: 1.5;
+}
+
+/* Premium Background */
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 32px 32px; opacity: 0.3; pointer-events: none; z-index: 0;
+}
+
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+p { color: hsl(var(--text-secondary)); }
+.hidden { display: none !important; }
+
+/* ── UI BUTTONS ── */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease; border: 1px solid transparent; font-family: var(--font-ui);
+}
+.btn-primary { background: hsl(var(--accent)); color: #fff; box-shadow: 0 0 15px hsl(var(--accent) / 0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 25px hsl(var(--accent) / 0.5); background: hsl(var(--accent-hover)); }
+.btn-secondary { background: hsl(230 20% 15%); color: hsl(0 0% 90%); border: 1px solid hsl(230 30% 30%); }
+.btn-secondary:hover { background: hsl(230 20% 20%); border-color: hsl(var(--accent)); color: #fff; transform: translateY(-2px); }
+
+/* ── NAVIGATION ── */
+#header {
+    position: fixed; top: 0; left: 0; right: 0; height: 70px;
+    background: hsl(var(--bg) / 0.7); backdrop-filter: blur(16px);
+    border-bottom: 1px solid hsl(var(--border));
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; z-index: 1000;
+}
+.logo { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-weight: 700; font-size: 1.2rem; cursor: pointer; transition: opacity 0.2s ease; }
+.logo:hover { opacity: 0.8; }
+.logo i { color: hsl(var(--accent)); width: 24px; height: 24px; }
+.logo .accent { color: hsl(var(--accent)); }
+#nav { display: flex; gap: 0.5rem; }
+.nav-tab {
+    background: transparent; border: none; color: hsl(var(--text-secondary));
+    font-family: var(--font-ui); font-size: 1.05rem; font-weight: 600;
+    padding: 0.6rem 1.25rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
+}
+.nav-tab:hover { color: hsl(var(--text-primary)); background: hsl(var(--card)); }
+.nav-tab.active { color: #fff; background: hsl(var(--accent-muted)); }
+
+#main { margin-top: 70px; padding: 2rem; min-height: calc(100vh - 70px); position: relative; z-index: 2; }
+.page { display: none; animation: fadeIn 0.4s ease-out; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── HOME: COMMAND CENTER & RANKS ── */
+.hero-dashboard {
+    position: relative; max-width: 900px; width: 100%; margin: 0 auto 3rem;
+    background: linear-gradient(145deg, hsl(230 20% 12% / 0.8), hsl(230 30% 8% / 0.9));
+    border: 1px solid hsl(230 40% 25%); border-radius: 16px; padding: 4rem 2rem;
+    text-align: center; box-shadow: 0 10px 40px hsl(0 0% 0% / 0.5), inset 0 0 0 1px hsl(230 50% 30% / 0.3);
+    backdrop-filter: blur(20px); overflow: hidden;
+}
+.hero-dashboard::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(transparent, hsl(199 89% 48% / 0.1), transparent 30%);
+    animation: radar-spin 10s linear infinite; pointer-events: none;
+}
+@keyframes radar-spin { 100% { transform: rotate(360deg); } }
+.hero-content { position: relative; z-index: 2; }
+
+/* Rank Badge Styling */
+.top-badges { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.status-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: hsl(142 70% 50% / 0.1); border: 1px solid hsl(142 70% 50% / 0.3);
+    color: hsl(142 70% 50%); padding: 0.4rem 1rem; border-radius: 20px;
+    font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+}
+.status-badge .status-dot { width: 8px; height: 8px; background: hsl(142 70% 50%); border-radius: 50%; animation: pulse-dot 1.5s infinite; }
+.rank-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: hsl(230 20% 15%); border: 1px solid hsl(230 30% 30%);
+    color: #fff; padding: 0.4rem 1rem; border-radius: 20px;
+    font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+}
+.rank-badge i { width: 14px; height: 14px; }
+@keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1rem; color: #fff; line-height: 1.1; }
+.neon-text { background: linear-gradient(to right, hsl(199 89% 60%), hsl(271 81% 70%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-subtitle { font-size: 1.15rem; color: hsl(240 5% 75%); max-width: 600px; margin: 0 auto 2.5rem; }
+.hero-actions { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+
+.hud-widgets { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto; }
+.hud-card {
+    background: linear-gradient(180deg, hsl(230 20% 10% / 0.6), hsl(230 20% 8% / 0.9)); backdrop-filter: blur(15px);
+    border: 1px solid hsl(230 30% 20%); border-radius: 12px; padding: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;
+}
+.hud-icon-wrapper { background: hsl(230 30% 15%); padding: 0.75rem; border-radius: 8px; color: hsl(199 89% 60%); border: 1px solid hsl(230 30% 25%); flex-shrink: 0; }
+.hud-details h3 { font-size: 1.1rem; color: #fff; margin-bottom: 0.25rem; }
+.hud-details p { font-size: 0.85rem; color: hsl(240 5% 65%); margin: 0; }
+
+/* ── LEARN MODULE ── */
+.learn-header { text-align: center; margin-bottom: 3rem; animation: fadeIn 0.5s ease-out; }
+.learn-header h2 { margin-bottom: 0.5rem; font-size: 2.2rem; font-weight: 800; color: #fff; }
+.topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+
+.topic-card {
+    background: linear-gradient(180deg, hsl(230 20% 10% / 0.8), hsl(230 20% 8% / 0.9)); backdrop-filter: blur(15px);
+    border: 1px solid hsl(230 30% 20%); border-radius: 12px; padding: 2rem; transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-align: left;
+}
+.topic-card:hover { transform: translateY(-5px); border-color: hsl(var(--accent)); box-shadow: 0 8px 30px hsl(var(--accent) / 0.15); }
+.topic-icon {
+    background: hsl(230 30% 15%); width: 48px; height: 48px; border-radius: 10px;
+    border: 1px solid hsl(230 30% 25%); display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem; color: hsl(var(--accent));
+}
+.topic-icon i { width: 24px; height: 24px; }
+.topic-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 0.5rem; font-weight: 700; }
+.topic-card p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; flex-grow: 1; }
+.topic-status {
+    font-size: 0.9rem; font-weight: 600; color: hsl(var(--accent)); margin-top: auto; padding: 0.75rem 1rem; text-align: center;
+    background: hsl(230 30% 15%); border-radius: 8px; border: 1px solid hsl(230 30% 25%);
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem; transition: 0.3s;
+}
+.topic-card:hover .topic-status { background: hsl(var(--accent)); color: #fff; border-color: hsl(var(--accent)); }
+.topic-card.completed { border-color: hsl(var(--success) / 0.4); }
+.topic-card.completed .topic-status { background: hsl(var(--success-muted)); color: hsl(var(--success)); border-color: hsl(var(--success) / 0.3); }
+
+.topic-view { max-width: 800px; margin: 0 auto; }
+#topic-content { background: hsl(230 20% 8%); border: 1px solid hsl(230 30% 20%); border-radius: 12px; padding: 3rem; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); margin-bottom: 2rem; }
+#topic-content h2 { color: #fff; margin-bottom: 2rem; font-size: 2rem; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid hsl(230 30% 20%); }
+
+/* ── DYNAMIC LEARNING BLOCKS ── */
+.dynamic-block {
+    animation: slideInDown 0.4s ease-out forwards;
+    background: linear-gradient(145deg, hsl(230 20% 12%), hsl(230 20% 10%));
+    border: 1px solid hsl(230 30% 25%);
+    border-left: 4px solid hsl(var(--accent));
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: hsl(240 5% 85%);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.dynamic-block strong.block-prefix {
+    display: inline-block;
+    color: hsl(var(--accent));
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    background: hsl(var(--accent) / 0.1);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid hsl(var(--accent) / 0.2);
+}
+
+.topic-analogy {
+    background: linear-gradient(90deg, hsl(199 89% 48% / 0.1), transparent); border-left: 3px solid hsl(var(--accent));
+    padding: 1.5rem; border-radius: 0 8px 8px 0; color: hsl(0 0% 90%); margin-top: 2.5rem; line-height: 1.6;
+}
+.topic-analogy strong { display: block; color: hsl(var(--accent)); margin-bottom: 0.5rem; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+
+@keyframes slideInDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+#btn-reveal-next { margin-top: 1rem; width: 100%; font-size: 1.1rem; padding: 1rem; animation: pulse-soft 2s infinite; }
+@keyframes pulse-soft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+
+/* ── LOCKED GAME SCREEN ── */
+.locked-screen { text-align: center; padding: 4rem 2rem; max-width: 600px; margin: 0 auto; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 16px; margin-top: 2rem; }
+.locked-screen i { color: hsl(var(--warning)); margin-bottom: 1rem; }
+
+.quiz-container { background: hsl(230 20% 10%); border: 1px solid hsl(230 30% 25%); border-radius: 12px; padding: 2.5rem; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 1.5rem; }
+.quiz-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, hsl(var(--accent)), transparent); opacity: 0.8; }
+.quiz-container h3 { color: #fff; margin-bottom: 0.75rem; font-size: 1.3rem; font-weight: 600; }
+.quiz-container p { color: hsl(240 5% 70%); margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.5; }
+#quiz-options { display: flex; flex-direction: column; gap: 1rem; }
+.quiz-option { 
+    width: 100%; text-align: left; padding: 1.25rem 1.5rem; background: hsl(230 20% 12%); border: 1px solid hsl(230 30% 25%); color: hsl(0 0% 90%); 
+    cursor: pointer; border-radius: 8px; transition: all 0.2s ease; font-size: 1rem; font-family: var(--font-ui); font-weight: 500;
+}
+.quiz-option:hover { background: hsl(230 20% 16%); border-color: hsl(var(--accent)); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 20px hsl(var(--accent) / 0.15); }
+.quiz-option.correct { background: hsl(var(--success-muted)); border-color: hsl(var(--success)); color: hsl(var(--success)); pointer-events: none; }
+.quiz-option.wrong { background: hsl(var(--danger-muted)); border-color: hsl(var(--danger)); color: hsl(var(--danger)); pointer-events: none; }
+.completion-message, .retry-message { border-radius: 8px; padding: 1.5rem; text-align: center; margin-top: 1.5rem; }
+.completion-message { background: hsl(var(--success-muted)); border: 1px solid hsl(var(--success)); color: hsl(var(--success)); }
+.retry-message { background: hsl(var(--warning-muted)); border: 1px solid hsl(var(--warning)); color: hsl(var(--warning)); }
+
+/* ── MINI GAME STYLES ── */
+.mg-input { background: hsl(var(--bg)); border: 2px solid hsl(var(--border)); color: #fff; font-size: 1.5rem; padding: 0.5rem; text-align: center; border-radius: 8px; width: 200px; margin-bottom: 1rem; font-family: var(--font-mono); }
+.mg-input:focus { outline: none; border-color: hsl(var(--accent)); }
+
+/* ── GAME: MISSION CONTROL ── */
+#game-briefing { max-width: 700px; margin: 0 auto; }
+.briefing-alert { background: hsl(var(--danger-muted)); border: 1px solid hsl(var(--danger) / 0.3); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; text-align: center; }
+.briefing-alert i { color: hsl(var(--danger)); margin-bottom: 0.75rem; }
+.briefing-alert h2 { color: hsl(var(--danger)); margin-bottom: 0.5rem; }
+.briefing-instructions { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+.briefing-instructions h3 { margin-bottom: 1rem; }
+.instruction-step { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; font-size: 0.9rem;}
+.step-number {
+    display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;
+    border-radius: 50%; background: hsl(var(--accent-muted)); border: 1px solid hsl(var(--accent) / 0.3);
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; color: hsl(var(--accent)); flex-shrink: 0;
+}
+.difficulty-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.difficulty-card {
+    background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 12px; padding: 1.5rem;
+    text-align: center; cursor: pointer; transition: 0.2s;
+}
+.difficulty-card:hover { transform: scale(1.02); border-color: hsl(var(--accent)); }
+.difficulty-icon i { color: hsl(var(--accent)); margin-bottom: 0.5rem; }
+
+/* ── GAME HUD & STYLING ── */
+.game-hud { 
+    position: sticky; top: 85px; z-index: 50; /* Makes HUD stick to the top */
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; 
+    margin-bottom: 1.5rem; background: hsl(var(--card)); 
+    padding: 1.25rem 2rem; /* Increased padding for a taller bar */
+    border-radius: 12px; border: 1px solid hsl(var(--border)); 
+}
+.hud-item { display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-mono); font-size: 1rem; }
+.hud-item i, .hud-item svg { color: hsl(var(--text-muted)); width: 24px; height: 24px; } /* Slightly larger icons */
+.hud-label { color: hsl(var(--text-muted)); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 600; } /* Larger labels */
+.hud-value { font-weight: 700; color: hsl(var(--accent)); font-size: 1.15rem; transition: color 0.2s ease; } /* Larger score numbers */
+#hud-timer.timer-warning { color: hsl(var(--warning)); animation: blink 1s infinite; }
+
+/* Dynamic Score Pop Animation */
+@keyframes score-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); color: hsl(var(--success)); text-shadow: 0 0 15px hsl(var(--success)); }
+    100% { transform: scale(1); }
+}
+.score-update { animation: score-pop 0.5s ease-out; display: inline-block; }
+.rank-badge.score-update { animation: score-pop 0.5s ease-out; }
+
+/* ── GAME BOARD (Now Non-Scrollable & Centered) ── */
+#game-board { 
+    background: hsl(230 20% 8%); border: 1px solid hsl(var(--border)); border-radius: 12px; 
+    padding: 1.5rem 2rem; 
+    height: calc(100vh - 240px); /* Exactly fills remaining viewport space */
+    min-height: 450px; 
+    position: relative; overflow: hidden; 
+    display: flex; flex-direction: column; justify-content: center; /* Centers phases vertically */
+}
+.phase-intro { text-align: center; max-width: 600px; margin: 0 auto; }
+.phase-intro h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.phase-intro p { font-size: 1rem; margin-bottom: 1.5rem; }
+.phase-hint { text-align: center; font-size: 1.05rem; color: hsl(var(--accent)); margin-bottom: 1rem; }
+
+/* Layered Mechanics Styles */
+.pc-warn.yellow { color: hsl(var(--warning)); }
+.packet-card.encrypted .pkt-icon i { color: hsl(var(--purple)); }
+.packet-card.encrypted .pkt-label { color: hsl(var(--purple)); font-weight: 700; display: block; }
+.glitch-effect { animation: screen-glitch 0.25s infinite; opacity: 0.85; filter: hue-rotate(90deg); }
+@keyframes screen-glitch {
+    0% { transform: translate(0) }
+    20% { transform: translate(-3px, 3px) }
+    40% { transform: translate(-3px, -3px) }
+    60% { transform: translate(3px, 3px) }
+    80% { transform: translate(3px, -3px) }
+    100% { transform: translate(0) }
+}
+
+/* ── COMPACT GRIDS TO FIT SCREEN ── */
+.phase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; width: 100%; }
+.phase-card {
+    background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 8px;
+    padding: 1rem; text-align: center; cursor: pointer; transition: 0.2s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.phase-card:hover { border-color: hsl(var(--accent)); transform: translateY(-2px); }
+.phase-card.clicked, .phase-card.severed, .phase-card.restored { opacity: 0.5; pointer-events: none; }
+.phase-card.folder-error { border-color: hsl(var(--danger)); background: hsl(var(--danger-muted)); }
+
+.pc-icon, .link-icon, .pkt-icon, .folder-icon { display: block; margin-bottom: 0.5rem; color: hsl(var(--text-secondary)); }
+.pc-label, .link-label, .folder-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.25rem; color: #fff; }
+.pc-hex, .link-hex, .folder-date, .folder-hex { font-family: var(--font-mono); font-size: 0.7rem; color: hsl(var(--text-muted)); margin-bottom: 0.5rem; display: block; }
+.pc-status, .link-status { font-size: 0.75rem; font-weight: 600; display:flex; align-items:center; gap: 0.25rem; justify-content:center;}
+.pc-status.ok, .link-status.ok, .folder-restored { color: hsl(var(--success)); font-size: 0.75rem; font-weight: 600; display:flex; align-items:center; gap:0.25rem; }
+.pc-warn, .link-status.danger { color: hsl(var(--danger)); font-size: 0.75rem; font-weight: 600; display:flex; align-items:center; gap: 0.25rem; justify-content:center; }
+
+.blink { animation: blink 1s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.phase-progress { text-align: center; margin-top: 1rem; font-family: var(--font-mono); font-weight: 700; color: hsl(var(--accent)); font-size: 1.1rem; }
+
+#packet-stream { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+.packet-card { padding: 1rem; min-width: 120px; animation: fadeIn 0.2s; }
+.packet-card.malicious .pkt-icon i { color: hsl(var(--danger)); }
+.packet-card.safe .pkt-icon i { color: hsl(var(--success)); }
+.packet-card.malicious .pkt-label { color: hsl(var(--danger)); font-weight: 700; display: block; }
+.packet-card.safe .pkt-label { color: hsl(var(--success)); font-weight: 700; display: block; }
+.packet-card.pkt-blocked { opacity: 0.2; transform: scale(0.9); pointer-events: none; }
+.packet-card.pkt-error { border-color: hsl(var(--danger)); background: hsl(var(--danger-muted)); }
+
+.log-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.log-entry { text-align: left; padding: 1rem 1.25rem; background: hsl(230 20% 12%); align-items: flex-start; }
+.log-entry:hover { background: hsl(230 20% 16%); }
+.log-meta { display: flex; justify-content: space-between; width: 100%; margin-bottom: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem; color: hsl(var(--text-muted)); }
+.log-file i { width: 14px; height: 14px; vertical-align: middle; }
+.log-body { font-family: var(--font-mono); font-size: 0.85rem; color: hsl(0 0% 90%); }
+
+/* ── MODAL ── */
+.modal { position: fixed; inset: 0; background: hsl(var(--bg) / 0.9); backdrop-filter: blur(10px); z-index: 3000; display: flex; align-items: center; justify-content: center; }
+.modal-content { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 16px; padding: 3rem; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.modal-content h2 { font-size: 2.4rem; margin-bottom: 1.5rem; display: flex; justify-content: center; align-items: center; line-height: 1.2; }
+#modal-message { font-size: 1.2rem; margin-bottom: 2.5rem; color: hsl(240 5% 75%); line-height: 1.5; }
+.modal-stats { display: flex; justify-content: center; gap: 3rem; margin-bottom: 2.5rem; font-family: var(--font-mono); background: hsl(var(--bg)); padding: 1.5rem; border-radius: 12px; border: 1px solid hsl(var(--border)); }
+.modal-stat { display: flex; flex-direction: column; font-size: 0.95rem; color: hsl(var(--text-muted)); }
+.modal-stat strong { font-size: 1.5rem; color: #fff; margin-top: 0.25rem; }
+.modal-actions { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
+.modal-actions .btn { font-size: 1.1rem; padding: 0.85rem 1.5rem; }
+.text-success { color: hsl(var(--success)); }
+.text-danger { color: hsl(var(--danger)); }
+
+/* Responsive */
+@media (max-width: 768px) {
+    #header { padding: 0 1rem; height: 60px; }
+    .logo-text { font-size: 1rem; }
+    .nav-tab { padding: 0.5rem 0.8rem; font-size: 0.95rem; }
+    #main { margin-top: 60px; padding: 1rem; min-height: calc(100vh - 60px); }
+    .hero-dashboard { padding: 2rem 1rem; }
+    .hero-title { font-size: 1.8rem; }
+    .hero-subtitle { font-size: 1rem; }
+    .hud-widgets, .topics-grid { grid-template-columns: 1fr; }
+    #topic-content { padding: 1.5rem; }
+    #topic-content h2 { font-size: 1.4rem; }
+    .quiz-container { padding: 1.5rem; }
+    .quiz-option { padding: 1rem; font-size: 0.9rem; }
+    .game-hud { justify-content: space-around; gap: 1rem; padding: 1rem; }
+    .phase-grid { grid-template-columns: repeat(2, 1fr); }
+    #game-board { padding: 1.5rem; }
+    .phase-intro h2 { font-size: 1.5rem; }
+    .modal-content { padding: 1.5rem; }
+    .modal-stats { flex-direction: column; gap: 1rem; }
+}
+@media (max-width: 480px) {
+    .phase-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; width: 100%; }
+    .btn { width: 100%; }
+    #nav { gap: 0.25rem; }
+    .nav-tab { font-size: 0.85rem; padding: 0.4rem 0.6rem; }
+}
+    </style>
 </head>
 <body>
     <div id="app">
+        <!-- COMMAND CENTER PREMIUM HEADER -->
         <header id="header">
-            <div class="logo">
+            <div class="logo" data-navigate="home">
                 <i data-lucide="shield-check"></i>
                 <span class="logo-text">Cybr<span class="accent">Web</span></span>
             </div>
             <nav id="nav">
-                <button class="nav-tab active" data-page="home">Home</button>
-                <button class="nav-tab" data-page="learn">Learn</button>
-                <button class="nav-tab" data-page="game">Play Game</button>
+                <!-- NEW: Hacker Music Toggle Button -->
+                <button id="btn-music" class="nav-tab" style="padding: 0.5rem 0.75rem;" title="Toggle Music">
+                    <i id="music-icon" data-lucide="volume-x"></i>
+                </button>
+                <button class="nav-tab active" data-page="home" data-navigate="home">Home</button>
+                <button class="nav-tab" data-page="learn" data-navigate="learn">Learn</button>
+                <button class="nav-tab" data-page="game" data-navigate="game">Play Game</button>
             </nav>
         </header>
 
         <main id="main">
+            <!-- HOMEPAGE -->
             <section id="home" class="page active">
-                <div class="hero">
-                    <h1 class="hero-title">Become a <span class="accent">Cybersecurity Incident Responder</span></h1>
-                    <p class="hero-subtitle">Learn how digital heroes protect computers from hackers!</p>
-                    <div class="hero-actions">
-                        <button class="btn btn-primary" data-navigate="learn">Start Learning</button>
-                        <button class="btn btn-secondary" data-navigate="game">Play Game</button>
+                <div class="hero-dashboard">
+                    <div class="hero-content">
+                        <div class="top-badges">
+                            <div class="status-badge">
+                                <span class="status-dot"></span> SYSTEM ONLINE
+                            </div>
+                            <div class="rank-badge" id="home-rank-badge">
+                                <!-- Rank injected by JS -->
+                            </div>
+                        </div>
+                        <h1 class="hero-title">Become a <span class="neon-text">Cybersecurity Incident Responder</span></h1>
+                        <p class="hero-subtitle">Step into the command center. Learn how digital heroes protect networks, detect threats, and stop hackers in their tracks.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" data-navigate="learn">
+                                <i data-lucide="book-open"></i> Start Learning
+                            </button>
+                            <button class="btn btn-secondary" data-navigate="game">
+                                <i data-lucide="gamepad-2"></i> Play Game
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="features">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i data-lucide="search"></i></div>
-                        <h3>Detect Threats</h3>
-                        <p>Find viruses and hackers hiding in computers</p>
+
+                <div class="hud-widgets">
+                    <div class="hud-card">
+                        <div class="hud-icon-wrapper"><i data-lucide="radar"></i></div>
+                        <div class="hud-details">
+                            <h3>Detect Threats</h3>
+                            <p>Find viruses and hackers hiding in local nodes.</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i data-lucide="shield"></i></div>
-                        <h3>Stop Attacks</h3>
-                        <p>Block bad traffic and protect networks</p>
+                    <div class="hud-card">
+                        <div class="hud-icon-wrapper"><i data-lucide="shield-alert"></i></div>
+                        <div class="hud-details">
+                            <h3>Stop Attacks</h3>
+                            <p>Block malicious packets and protect networks.</p>
+                        </div>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-icon"><i data-lucide="monitor-check"></i></div>
-                        <h3>Save Systems</h3>
-                        <p>Recover files and fix broken computers</p>
+                    <div class="hud-card">
+                        <div class="hud-icon-wrapper"><i data-lucide="server-crash"></i></div>
+                        <div class="hud-details">
+                            <h3>Save Systems</h3>
+                            <p>Recover critical files and fix breached systems.</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- LEARN MODULE -->
             <section id="learn" class="page">
                 <div class="learn-header">
                     <h2>Learn About Cybersecurity</h2>
@@ -60,44 +466,50 @@
                 </div>
                 <div id="topics-container" class="topics-grid"></div>
                 <div id="topic-view" class="topic-view hidden">
-                    <button class="btn btn-back" id="back-to-topics">Back to Topics</button>
+                    <button class="btn btn-secondary" id="back-to-topics" style="margin-bottom: 2rem;"><i data-lucide="arrow-left"></i> Back to Topics</button>
                     <div id="topic-content"></div>
                     <div id="topic-quiz"></div>
                 </div>
             </section>
 
+            <!-- GAME MODULE -->
             <section id="game" class="page">
+                <!-- NEW: LOCKED SCREEN -->
+                <div id="game-locked" class="locked-screen hidden">
+                    <i data-lucide="lock" style="width: 64px; height: 64px;"></i>
+                    <h2 style="font-size: 2.2rem; margin-bottom: 1rem;">Training Required!</h2>
+                    <p style="font-size: 1.15rem; margin-bottom: 2.5rem; color: hsl(240 5% 75%);">The Command Center is highly classified. You must complete all 4 Learning Modules to prove you are ready before you can play the game!</p>
+                    <button class="btn btn-primary" data-navigate="learn" style="font-size: 1.2rem; padding: 1rem 2rem;"><i data-lucide="book-open"></i> Go to Learning Modules</button>
+                </div>
+
                 <div id="game-briefing">
                     <div class="briefing-alert">
-                        <div class="alert-icon"><i data-lucide="alert-triangle"></i></div>
+                        <i data-lucide="alert-triangle" style="width: 48px; height: 48px;"></i>
                         <h2>NETWORK BREACH DETECTED</h2>
-                        <p class="briefing-scenario">A computer on the network has been hacked. You've been called in as the <strong>Cybersecurity Incident Responder</strong>. Follow the 5 steps of incident response to secure the system and save the data!</p>
+                        <p>A computer on the network has been hacked. You've been called in as the <strong>Cybersecurity Incident Responder</strong>. Follow the 5 steps of incident response to secure the system and save the data!</p>
                     </div>
                     <div class="briefing-instructions">
                         <h3>How to Play</h3>
-                        <div class="instruction-steps">
-                            <div class="instruction-step">
-                                <span class="step-number">1</span>
-                                <div><strong>DETECT</strong> — Find the infected computer. Look for subtle warning signs!</div>
-                            </div>
-                            <div class="instruction-step">
-                                <span class="step-number">2</span>
-                                <div><strong>ISOLATE</strong> — Disconnect the infected computer from the network before the threat spreads.</div>
-                            </div>
-                            <div class="instruction-step">
-                                <span class="step-number">3</span>
-                                <div><strong>BLOCK</strong> — Click suspicious data packets to block them. Don't block safe traffic!</div>
-                            </div>
-                            <div class="instruction-step">
-                                <span class="step-number">4</span>
-                                <div><strong>ANALYZE</strong> — Search through system logs to find the attack source. Read carefully!</div>
-                            </div>
-                            <div class="instruction-step">
-                                <span class="step-number">5</span>
-                                <div><strong>RECOVER</strong> — Restore files from backups in the correct order (oldest first).</div>
-                            </div>
+                        <div class="instruction-step">
+                            <span class="step-number">1</span>
+                            <div><strong>DETECT</strong> — Find the infected computer. Look for subtle warning signs!</div>
                         </div>
-                        <p class="instruction-tip">Tip: Choose your difficulty. Harder modes give less time and trickier clues!</p>
+                        <div class="instruction-step">
+                            <span class="step-number">2</span>
+                            <div><strong>ISOLATE</strong> — Disconnect the infected computer from the network before the threat spreads.</div>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">3</span>
+                            <div><strong>BLOCK</strong> — Click suspicious data packets to block them. Don't block safe traffic!</div>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">4</span>
+                            <div><strong>ANALYZE</strong> — Search through system logs to find the attack source. Read carefully!</div>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="step-number">5</span>
+                            <div><strong>RECOVER</strong> — Restore files from backups in the correct order (oldest first).</div>
+                        </div>
                     </div>
                     <div class="briefing-difficulty">
                         <h3>Choose Difficulty</h3>
@@ -105,79 +517,1626 @@
                     </div>
                 </div>
                 <div id="game-play" class="hidden">
-                    <header class="soc-topbar">
-                        <div class="game-hud">
-                            <div class="hud-item">
-                                <i data-lucide="layers" class="hud-icon"></i>
-                                <span class="hud-label">Stage</span>
-                                <span class="hud-value" id="hud-stage">1/5</span>
-                            </div>
-                            <div class="hud-item">
-                                <i data-lucide="timer" class="hud-icon"></i>
-                                <span class="hud-label">Timer</span>
-                                <span class="hud-value" id="hud-timer">60</span>
-                            </div>
-                            <div class="hud-item">
-                                <i data-lucide="alert-circle" class="hud-icon"></i>
-                                <span class="hud-label">Mistakes</span>
-                                <span class="hud-value" id="hud-mistakes">0/3</span>
-                            </div>
-                            <div class="hud-item">
-                                <i data-lucide="zap" class="hud-icon"></i>
-                                <span class="hud-label">Score</span>
-                                <span class="hud-value" id="hud-score">0</span>
-                            </div>
+                    <header class="game-hud">
+                        <div class="hud-item">
+                            <i data-lucide="layers"></i>
+                            <span class="hud-label">Stage</span>
+                            <span class="hud-value" id="hud-stage">1/5</span>
+                        </div>
+                        <div class="hud-item">
+                            <i data-lucide="timer"></i>
+                            <span class="hud-label">Timer</span>
+                            <span class="hud-value" id="hud-timer">0:00</span>
+                        </div>
+                        <div class="hud-item">
+                            <i data-lucide="alert-circle"></i>
+                            <span class="hud-label">Mistakes</span>
+                            <span class="hud-value" id="hud-mistakes">0</span>
+                        </div>
+                        <div class="hud-item">
+                            <i data-lucide="award"></i>
+                            <span class="hud-label">Score</span>
+                            <span class="hud-value" id="hud-score">0</span>
                         </div>
                     </header>
-                    <aside class="soc-sidebar">
-                        <div id="action-panel"></div>
-                    </aside>
-                    <main class="soc-workspace">
-                        <div id="game-board"></div>
-                    </main>
-                </div>
-                <div id="game-modal" class="modal hidden">
-                    <div class="modal-content">
-                        <h2 id="modal-title"></h2>
-                        <p id="modal-message"></p>
-                        <div id="modal-stars"></div>
-                        <div id="modal-stats"></div>
-                        <div class="modal-actions">
-                            <button class="btn btn-primary" id="modal-retry" style="display: none;">Try Again</button>
-                            <button class="btn btn-secondary" id="modal-menu">Back to Menu</button>
-                        </div>
+                    <div id="game-board">
+                        <!-- Rendered by GameBoard object -->
                     </div>
                 </div>
             </section>
         </main>
-
-        <footer id="footer">
-            <p>CybrWeb &copy; 2026 | Learn. Play. Protect.</p>
-        </footer>
     </div>
 
-    <script src="js/utils/dom.js"></script>
-    <script src="js/utils/storage.js"></script>
-    <script src="js/utils/audio.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/game/difficulty.js"></script>
-    <script src="js/game/components/difficulty-selector.js"></script>
-    <script src="js/game/game-states.js"></script>
-    <script src="js/game/game-loop.js"></script>
-    <script src="js/game/scoring.js"></script>
-    <script src="js/game/components/game-board.js"></script>
-    <script src="js/game/components/timer-display.js"></script>
-    <script src="js/game/components/threat-monitor.js"></script>
-    <script src="js/game/components/action-panel.js"></script>
-    <script src="js/game/game.js"></script>
-    <script src="js/learn/topics.js"></script>
-    <script src="js/learn/quiz.js"></script>
-    <script src="js/learn/progress.js"></script>
-    <script src="js/learn/learn.js"></script>
-    <script src="js/app.js"></script>
+    <!-- MODAL -->
+    <div id="game-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="modal-title"></h2>
+            <div id="modal-message"></div>
+            <div id="modal-stats" class="modal-stats"></div>
+            <!-- Added more padding and margin to the rank info container -->
+            <div id="modal-rank-info" style="margin-bottom: 2.5rem; font-family: var(--font-mono); font-size: 1.1rem; color: hsl(0 0% 90%); border-top: 1px solid hsl(var(--border)); padding-top: 2rem;"></div>
+            <div class="modal-actions">
+                <button id="modal-retry" class="btn btn-primary"><i data-lucide="rotate-ccw"></i> Try Again</button>
+                <button id="modal-next-phase" class="btn btn-primary" style="display: none;"><i data-lucide="arrow-right"></i> Next Stage</button>
+                <button id="modal-next" class="btn btn-primary" style="display: none; background: hsl(var(--purple)); border-color: hsl(var(--purple)); box-shadow: 0 0 15px hsl(var(--purple) / 0.3);"><i data-lucide="chevrons-right"></i> Next Difficulty</button>
+                <button id="modal-menu" class="btn btn-secondary"><i data-lucide="home"></i> Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
+    const AppState = {
+        currentPage: 'home',
+        totalScore: 0, // Track cumulative score for Rank Rewards
+        learn: { topicProgress: {} },
+        load() {
+            const saved = localStorage.getItem('cybrweb_state');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    if(parsed.currentPage) this.currentPage = parsed.currentPage;
+                    if(parsed.learn) this.learn = parsed.learn;
+                    if(parsed.totalScore) this.totalScore = parsed.totalScore;
+                } catch(e) { this.currentPage = saved; }
+            }
+        },
+        save() {
+            localStorage.setItem('cybrweb_state', JSON.stringify({
+                currentPage: this.currentPage, 
+                learn: this.learn, 
+                totalScore: this.totalScore
+            }));
+        }
+    };
+
+    // --- CYBER RANK SYSTEM ---
+    const RankSystem = {
+        getRank() {
+            const score = AppState.totalScore || 0;
+            if (score >= 30000) return { name: "Cyber Commander", icon: "shield-alert", color: "var(--accent)" };
+            if (score >= 15000) return { name: "Lead Analyst", icon: "search", color: "var(--warning)" };
+            if (score >= 5000)  return { name: "Junior Responder", icon: "shield", color: "var(--success)" };
+            return { name: "Trainee", icon: "user", color: "var(--text-muted)" };
+        },
+        getNextRank() {
+            const score = AppState.totalScore || 0;
+            if (score < 5000) return { name: "Junior Responder", threshold: 5000, base: 0 };
+            if (score < 15000) return { name: "Lead Analyst", threshold: 15000, base: 5000 };
+            if (score < 30000) return { name: "Cyber Commander", threshold: 30000, base: 15000 };
+            return null; // Max rank achieved
+        },
+        updateUI() {
+            const rank = this.getRank();
+            const badge = document.getElementById('home-rank-badge');
+            if (badge) {
+                badge.innerHTML = `<i data-lucide="${rank.icon}" style="color: hsl(${rank.color})"></i> Rank: ${rank.name} (XP: ${AppState.totalScore || 0})`;
+                
+                // Add a dynamic pop effect when XP increases
+                badge.classList.remove('score-update');
+                void badge.offsetWidth; // Trigger reflow to restart animation
+                badge.classList.add('score-update');
+                
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+    };
+
+    // --- PROCEDURAL HACKER MUSIC ---
+    const HackerMusic = {
+        ctx: null,
+        delayNode: null,
+        feedback: null,
+        isPlaying: false,
+        interval: null,
+        init() {
+            document.getElementById('btn-music').addEventListener('click', () => this.toggle());
+        },
+        toggle() {
+            if (this.isPlaying) this.stop();
+            else this.play();
+        },
+        play() {
+            // Browsers require audio to be started by a user click
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // NEW: Create a cool "Echo/Delay" effect for the hacker vibe
+                this.delayNode = this.ctx.createDelay();
+                this.delayNode.delayTime.value = 0.3; // 300ms echo
+                this.feedback = this.ctx.createGain();
+                this.feedback.gain.value = 0.35; // Echo fades out slowly
+                
+                this.delayNode.connect(this.feedback);
+                this.feedback.connect(this.delayNode);
+                this.delayNode.connect(this.ctx.destination);
+            }
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+            this.isPlaying = true;
+            
+            // Dramatic Spy/Detective Tempo
+            const bpm = 100;
+            const stepTime = (60 / bpm) / 4; // 16th note timing
+            let step = 0;
+            
+            // Cinematic Hacker Arpeggio (E Minor)
+            const arpNotes = [
+                329.63, 392.00, 493.88, 392.00, // E, G, B, G
+                329.63, 523.25, 493.88, 392.00, // E, C, B, G
+                293.66, 392.00, 493.88, 392.00, // D, G, B, G
+                293.66, 440.00, 392.00, 329.63  // D, A, G, E
+            ];
+            
+            this.interval = setInterval(() => {
+                if(this.ctx.state !== 'running') return;
+                const time = this.ctx.currentTime;
+                
+                // --- 1. The High-Tech Data Stream (Arpeggiator) ---
+                const arpOsc = this.ctx.createOscillator();
+                const arpGain = this.ctx.createGain();
+                const arpFilter = this.ctx.createBiquadFilter();
+                
+                arpOsc.type = 'square';
+                arpOsc.frequency.setValueAtTime(arpNotes[step % 16], time);
+                
+                arpFilter.type = 'lowpass';
+                arpFilter.frequency.setValueAtTime(800, time);
+                arpFilter.frequency.exponentialRampToValueAtTime(3000, time + 0.05);
+                arpFilter.frequency.exponentialRampToValueAtTime(800, time + stepTime);
+                
+                arpGain.gain.setValueAtTime(0.04, time); // Soft volume
+                arpGain.gain.exponentialRampToValueAtTime(0.001, time + stepTime - 0.02);
+                
+                arpOsc.connect(arpFilter);
+                arpFilter.connect(arpGain);
+                arpGain.connect(this.ctx.destination); // Play normal sound
+                arpGain.connect(this.delayNode);       // Send to echo effect!
+                
+                arpOsc.start(time);
+                arpOsc.stop(time + stepTime);
+
+                // --- 2. The Suspenseful Bass Drone ---
+                // Plays a deep hum that shifts every 8 steps
+                if (step % 8 === 0) {
+                    const bassOsc = this.ctx.createOscillator();
+                    const bassGain = this.ctx.createGain();
+                    bassOsc.type = 'triangle'; // Smooth, cinematic bass
+                    
+                    const bassFreq = (Math.floor(step / 8) % 2 === 0) ? 164.81 : 146.83; // E3 then D3
+                    bassOsc.frequency.setValueAtTime(bassFreq, time);
+                    
+                    bassGain.gain.setValueAtTime(0.18, time);
+                    bassGain.gain.exponentialRampToValueAtTime(0.01, time + (stepTime * 8));
+                    
+                    bassOsc.connect(bassGain);
+                    bassGain.connect(this.ctx.destination);
+                    
+                    bassOsc.start(time);
+                    bassOsc.stop(time + (stepTime * 8));
+                }
+
+                // --- 3. Cinematic Radar Ping ---
+                // Plays a high-pitched sonar sweep at the start of every loop
+                if (step % 16 === 0) {
+                    const pingOsc = this.ctx.createOscillator();
+                    const pingGain = this.ctx.createGain();
+                    pingOsc.type = 'sine';
+                    pingOsc.frequency.setValueAtTime(1318.51, time); // E6
+                    
+                    pingGain.gain.setValueAtTime(0.08, time);
+                    pingGain.gain.exponentialRampToValueAtTime(0.001, time + 1.0);
+                    
+                    pingOsc.connect(pingGain);
+                    pingGain.connect(this.ctx.destination);
+                    pingGain.connect(this.delayNode); // Echo the ping!
+                    
+                    pingOsc.start(time);
+                    pingOsc.stop(time + 1.0);
+                }
+                
+                step++;
+            }, stepTime * 1000);
+            
+            document.getElementById('music-icon').setAttribute('data-lucide', 'volume-2');
+            if (window.lucide) lucide.createIcons();
+        },
+        stop() {
+            this.isPlaying = false;
+            if (this.interval) clearInterval(this.interval);
+            document.getElementById('music-icon').setAttribute('data-lucide', 'volume-x');
+            if (window.lucide) lucide.createIcons();
+        }
+    };
+
+    const Navigation = {
+        init() {},
+        navigateTo(pageId) { App.showPage(pageId); }
+    };
+
+    const TOPICS = [
+        {
+            id: 1,
+            title: 'What is a Cyber Attack?',
+            icon: '<i data-lucide="laptop"></i>',
+            summary: 'Learn how hackers try to break into computers and steal information.',
+            content: [
+                'A cyber attack is when someone tries to break into a computer system or network without permission. Just like a bully might try to open your locker at school, hackers try to sneak into computers to steal information or cause trouble.',
+                'Hackers use different tricks to get into computers. Sometimes they send fake emails that look real, sometimes they create sneaky programs called viruses, and sometimes they just guess weak passwords.',
+                'The good news is that there are people called Cybersecurity Incident Responders whose job is to stop these attacks and keep computers safe. They are like digital superheroes!'
+            ],
+            analogy: 'Think of a cyber attack like someone trying to sneak into your house through an unlocked window. An Incident Responder is like a security guard who finds them and locks the window!',
+            quiz: [
+                { type: 'truefalse', question: 'Hackers always wear black hoodies like in movies.', answer: false },
+                { type: 'truefalse', question: 'A cyber attack is when someone tries to break into a computer without permission.', answer: true },
+                { type: 'multiplechoice', question: 'What is a virus in computer terms?', options: ['A sickness that makes computers sneeze', 'A sneaky program that harms your computer', 'A type of computer game', 'A new type of keyboard'], correct: 1 },
+                { type: 'multiplechoice', question: 'Who protects computers from cyber attacks?', options: ['Firefighters', 'Doctors', 'Cybersecurity Incident Responders', 'Teachers'], correct: 2 }
+            ]
+        },
+        {
+            id: 2,
+            title: 'What does an Incident Responder do?',
+            icon: '<i data-lucide="shield"></i>',
+            summary: 'Discover the 5 steps digital heroes take to stop cyber attacks.',
+            content: [
+                'An Incident Responder is like a digital doctor for computers. When something goes wrong, they follow 5 important steps to fix the problem and keep everyone safe.',
+                'Step 1: DETECT - They find out that something bad is happening by watching for warning signs, just like a doctor checks your temperature.',
+                'Step 2: ISOLATE - They disconnect the infected computer from the network so the problem does not spread to other computers.',
+                'Step 3: BLOCK - They stop the bad traffic or hackers from getting in, like closing a door to keep a burglar out.',
+                'Step 4: ANALYZE - They investigate what happened, looking at clues in log files to figure out how the attack started.',
+                'Step 5: RECOVER - They restore the computer back to normal using backups, making sure everything works again.'
+            ],
+            analogy: 'An Incident Responder is like a firefighter! They detect the fire, isolate the area, block the flames from spreading, analyze what caused it, and help rebuild afterward.',
+            quiz: [
+                { type: 'truefalse', question: 'The first thing an Incident Responder does is delete everything.', answer: false },
+                { type: 'truefalse', question: 'Isolating a computer means disconnecting it from the network.', answer: true },
+                { type: 'multiplechoice', question: 'What is the FIRST thing an Incident Responder does when there is a cyber attack?', options: ['Deletes everything', 'Tells everyone on social media', 'Finds out what is happening', 'Turns off the computer'], correct: 2 },
+                { type: 'multiplechoice', question: 'What does "isolating" a computer mean?', options: ['Putting it in a box', 'Disconnecting it from the network', 'Painting it a different color', 'Making it run faster'], correct: 1 }
+            ]
+        },
+        {
+            id: 3,
+            title: 'Staying Safe Online',
+            icon: '<i data-lucide="lock"></i>',
+            summary: 'Learn simple rules to protect yourself on the internet.',
+            content: [
+                'The internet is an amazing place to learn and play, but you need to follow some safety rules to stay protected.',
+                'PASSWORDS: Create strong passwords that are hard to guess. Mix letters, numbers, and symbols. Never share your password with friends, only with your parents or teachers.',
+                'BACKUPS: Always keep copies of your important files. If something goes wrong with your computer, you can restore your files from the backup.',
+                'SUSPICIOUS LINKS: Never click on links in emails or messages from people you do not know. If something looks weird or too good to be true, it probably is!',
+                'TELL AN ADULT: If you see something strange on your computer or someone is asking for your personal information, tell a trusted adult right away.'
+            ],
+            analogy: 'Staying safe online is like wearing a seatbelt in a car. It only takes a second, but it protects you the whole time!',
+            quiz: [
+                { type: 'truefalse', question: 'Backing up your files helps keep them safe.', answer: true },
+                { type: 'truefalse', question: 'You should click on links in emails from strangers.', answer: false },
+                { type: 'multiplechoice', question: 'What makes a strong password?', options: ['Your birthday', 'The word "password"', 'A mix of letters, numbers, and symbols', 'Your pet\'s name'], correct: 2 },
+                { type: 'multiplechoice', question: 'If you see a weird pop-up asking for your password, what should you do?', options: ['Type your password quickly', 'Ignore it and tell an adult', 'Share it with friends', 'Click yes to see what happens'], correct: 1 }
+            ]
+        },
+        {
+            id: 4,
+            title: 'Inside an Incident Response Team',
+            icon: '<i data-lucide="users"></i>',
+            summary: 'Meet the team of experts who work together to stop cyber attacks.',
+            content: [
+                'An Incident Response Team is a group of people who work together like a sports team to protect computers and networks from cyber attacks.',
+                'TEAM ROLES: Some team members watch for threats all day long, others investigate what happened after an attack, and some specialize in fixing broken systems and restoring data.',
+                'TOOLS THEY USE: Incident Responders use special software to monitor networks, scan for viruses, analyze suspicious files, and track down where attacks are coming from.',
+                'CAREER PATHWAY: You can become an Incident Responder by studying computer science, learning about cybersecurity, and practicing with games and challenges like this one!',
+                'Every member of the team is important. Just like in a soccer team where everyone has a different position, the Incident Response Team needs different skills to win against hackers.'
+            ],
+            analogy: 'An Incident Response Team is like a hospital emergency room team. Doctors, nurses, and specialists all work together to help patients get better!',
+            quiz: [
+                { type: 'truefalse', question: 'An Incident Response Team only has one person.', answer: false },
+                { type: 'truefalse', question: 'You can become an Incident Responder by studying computer science.', answer: true },
+                { type: 'multiplechoice', question: 'What tools do Incident Responders use?', options: ['Hammer and nails', 'Special software to monitor networks', 'Paintbrushes', 'Musical instruments'], correct: 1 },
+                { type: 'multiplechoice', question: 'Why does an Incident Response Team need different roles?', options: ['Because it is more fun', 'So everyone has something to do', 'Because different skills are needed to solve different problems', 'To make the team look bigger'], correct: 2 }
+            ]
+        }
+    ];
+
+    const Quiz = {
+        container: null,
+        questions: [],
+        score: 0,
+        currentQuestion: 0,
+        onComplete: null,
+
+        init(container, questions, onComplete) {
+            this.container = typeof container === 'string' ? document.getElementById(container) : container;
+            this.questions = questions;
+            this.onComplete = onComplete;
+            this.currentQuestion = 0;
+            this.score = 0;
+            this.render();
+        },
+
+        render() {
+            if (this.currentQuestion >= this.questions.length) {
+                this.finish();
+                return;
+            }
+
+            const q = this.questions[this.currentQuestion];
+            let optionsHtml = '';
+
+            if (q.type === 'truefalse') {
+                optionsHtml = `
+                    <button class="quiz-option" onclick="Quiz.selectOption(this, ${q.answer === true})">True</button>
+                    <button class="quiz-option" onclick="Quiz.selectOption(this, ${q.answer === false})">False</button>
+                `;
+            } else if (q.type === 'multiplechoice') {
+                optionsHtml = q.options.map((opt, idx) => `
+                    <button class="quiz-option" onclick="Quiz.selectOption(this, ${idx === q.correct})">${opt}</button>
+                `).join('');
+            }
+
+            this.container.innerHTML = `
+                <div class="quiz-container">
+                    <h3>Knowledge Check (${this.currentQuestion + 1}/${this.questions.length})</h3>
+                    <p>${q.question}</p>
+                    <div id="quiz-options">${optionsHtml}</div>
+                </div>
+            `;
+        },
+
+        selectOption(btnElement, isCorrect) {
+            if (isCorrect) {
+                this.score++;
+                btnElement.classList.add('correct');
+            } else {
+                btnElement.classList.add('wrong');
+            }
+            const buttons = this.container.querySelectorAll('.quiz-option');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            this.currentQuestion++;
+            setTimeout(() => this.render(), 800);
+        },
+
+        finish() {
+            const percentage = this.score / this.questions.length;
+            this.container.innerHTML = ''; 
+            if (this.onComplete) this.onComplete(percentage);
+        }
+    };
+
+    const LearnModule = {
+        currentTopic: null,
+        topicsContainer: null,
+        topicView: null,
+        topicContent: null,
+        topicQuiz: null,
+        backBtn: null,
+
+        init() {
+            this.topicsContainer = document.getElementById('topics-container');
+            this.topicView = document.getElementById('topic-view');
+            this.topicContent = document.getElementById('topic-content');
+            this.topicQuiz = document.getElementById('topic-quiz');
+            this.backBtn = document.getElementById('back-to-topics');
+
+            if (this.backBtn) this.backBtn.addEventListener('click', () => this.showTopicList());
+            this.renderTopicList();
+        },
+
+        renderTopicList() {
+            if (!this.topicsContainer) return;
+            this.topicsContainer.innerHTML = '';
+            this.topicView?.classList.add('hidden');
+            this.topicsContainer.classList.remove('hidden');
+
+            TOPICS.forEach((topic, i) => {
+                const completed = AppState.learn.topicProgress[i];
+                const card = document.createElement('div');
+                card.className = `topic-card ${completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="topic-icon">${topic.icon}</div>
+                    <h3>${topic.title}</h3>
+                    <p>${topic.summary}</p>
+                    <div class="topic-status">
+                        ${completed ? '<i data-lucide="check-circle-2"></i> Completed' : '<i data-lucide="book-open"></i> Start Learning'}
+                    </div>
+                `;
+                card.addEventListener('click', () => this.showTopic(i));
+                this.topicsContainer.appendChild(card);
+            });
+            if (window.lucide) lucide.createIcons();
+        },
+
+        showTopic(index) {
+            this.currentTopic = index;
+            const topic = TOPICS[index];
+
+            this.topicsContainer?.classList.add('hidden');
+            this.topicView?.classList.remove('hidden');
+
+            this.topicContent.innerHTML = `
+                <h2><span style="color: hsl(var(--accent)); display: flex; align-items: center;">${topic.icon.replace('"></i>', '" style="width: 32px; height: 32px;"></i>')}</span> ${topic.title}</h2>
+                <div class="topic-body" id="dynamic-paragraphs">
+                    ${topic.content.map((text, i) => {
+                        // Automatically detect prefixes like "Step 1: DETECT -" or "PASSWORDS:" and turn them into badges!
+                        let formattedText = text;
+                        const prefixMatch = formattedText.match(/^(Step \d+:\s[A-Z]+ -|[A-Z\s]+:)/);
+                        if (prefixMatch) {
+                            const cleanPrefix = prefixMatch[0].replace(/[-:]$/, '').trim();
+                            formattedText = formattedText.replace(prefixMatch[0], `<strong class="block-prefix"><i data-lucide="zap" style="width:14px;height:14px;display:inline-block;vertical-align:middle;margin-right:6px;margin-top:-2px;"></i>${cleanPrefix}</strong><br>`);
+                        }
+                        return `<div class="dynamic-block ${i > 0 ? 'hidden' : ''}">${formattedText}</div>`;
+                    }).join('')}
+                </div>
+                <button id="btn-reveal-next" class="btn btn-primary"><i data-lucide="chevron-down"></i> Read More</button>
+                <div id="topic-analogy-container" class="hidden">
+                    <div class="topic-analogy">
+                        <strong>Real-World Example:</strong> ${topic.analogy}
+                    </div>
+                </div>
+            `;
+
+            // Hide the quiz until all text is revealed
+            this.topicQuiz.classList.add('hidden');
+            
+            const btnReveal = document.getElementById('btn-reveal-next');
+            const analogyContainer = document.getElementById('topic-analogy-container');
+            
+            // Dynamic text reveal logic
+            btnReveal.onclick = () => {
+                const hiddenParagraphs = document.querySelectorAll('.dynamic-block.hidden');
+                if (hiddenParagraphs.length > 0) {
+                    hiddenParagraphs[0].classList.remove('hidden'); // Reveal next paragraph
+                }
+                
+                // If there are no more hidden paragraphs, show the analogy and quiz
+                if (document.querySelectorAll('.dynamic-block.hidden').length === 0) {
+                    btnReveal.classList.add('hidden');
+                    analogyContainer.classList.remove('hidden');
+                    this.topicQuiz.classList.remove('hidden');
+                }
+            };
+
+            Quiz.init(this.topicQuiz, topic.quiz, (score) => {
+                this.onQuizComplete(index, score);
+            });
+            
+            if (window.lucide) lucide.createIcons();
+        },
+
+        showTopicList() {
+            this.currentTopic = null;
+            this.renderTopicList();
+        },
+
+        onQuizComplete(topicIndex, score) {
+            const passed = score >= 0.75;
+            AppState.learn.topicProgress[topicIndex] = passed;
+            AppState.save();
+
+            if (passed) {
+                this.showCompletionMessage(topicIndex);
+            } else {
+                this.showRetryMessage(topicIndex);
+            }
+        },
+
+        showCompletionMessage(topicIndex) {
+            const topic = TOPICS[topicIndex];
+            const msg = document.createElement('div');
+            msg.className = 'completion-message';
+            msg.innerHTML = `
+                <h3><i data-lucide="award" style="vertical-align:middle; width:28px; height:28px; margin-right:8px;"></i> Great Job!</h3>
+                <p>You completed "${topic.title}"!</p>
+                <button class="btn btn-primary" onclick="LearnModule.showTopicList()">Back to Topics</button>
+            `;
+            this.topicQuiz.appendChild(msg);
+            if(window.lucide) lucide.createIcons();
+        },
+
+        showRetryMessage(topicIndex) {
+            const msg = document.createElement('div');
+            msg.className = 'retry-message';
+            msg.innerHTML = `
+                <h3><i data-lucide="refresh-cw" style="vertical-align:middle; width:28px; height:28px; margin-right:8px;"></i> Keep Trying!</h3>
+                <p>You need 75% to pass. Review the content and try again!</p>
+                <button class="btn btn-primary" onclick="LearnModule.showTopic(${topicIndex})">Try Again</button>
+            `;
+            this.topicQuiz.appendChild(msg);
+            if(window.lucide) lucide.createIcons();
+        }
+    };
+
+    // --- UPDATED DIFFICULTY & LAYERED MECHANICS FLAGS ---
+    const Difficulty = {
+      EASY: { id: 'easy', name: 'Easy', time: 45, mistakes: 5, mult: 1, icon: 'shield-check', desc: 'Standard protocol.', flags: {} },
+      MEDIUM: { id: 'medium', name: 'Medium', time: 35, mistakes: 3, mult: 2, icon: 'shield-alert', desc: 'Adds decoy nodes & encrypted packets.', flags: { decoys: true } },
+      HARD: { id: 'hard', name: 'Hard', time: 30, mistakes: 2, mult: 3, icon: 'skull', desc: 'Adds spreading viruses & system glitches!', flags: { decoys: true, spread: true, glitch: true } }
+    };
+
+    const DifficultySelector = {
+        init(containerId) {
+            const container = document.getElementById(containerId);
+            if(!container) return;
+            container.innerHTML = '';
+            [Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD].forEach(d => {
+                const card = document.createElement('div');
+                card.className = `difficulty-card`;
+                card.innerHTML = `<div class="difficulty-icon"><i data-lucide="${d.icon}" style="width:32px; height:32px;"></i></div><h3 style="color:#fff; margin-bottom:0.5rem">${d.name}</h3><p style="color:hsl(240 5% 75%); font-size:0.85rem">${d.desc}</p>`;
+                card.onclick = () => Game.start(d.id);
+                container.appendChild(card);
+            });
+        }
+    };
+
+    const GameBoard = {
+      el: null,
+      phases: ['DETECT', 'ISOLATE', 'BLOCK', 'ANALYZE', 'RECOVER'],
+      currentInterval: null,
+      virusSpreadInterval: null, // Track hard-mode spreading virus
+      glitchInterval: null,      // Track hard-mode screen glitch
+      isAnomaly: false,          // Track if current phase is hijacked by a mini-game
+
+      init() { this.el = document.getElementById('game-board'); },
+
+      loadPhase(idx, isRetry = false) {
+        this.clear();
+        this.el.className = `phase-${this.phases[idx].toLowerCase()}`;
+        this.showPhaseIntro(idx, isRetry);
+      },
+
+      clear() {
+        if (this.currentInterval) { clearInterval(this.currentInterval); this.currentInterval = null; }
+        if (this.virusSpreadInterval) { clearInterval(this.virusSpreadInterval); this.virusSpreadInterval = null; }
+        if (this.glitchInterval) { clearInterval(this.glitchInterval); this.glitchInterval = null; }
+        if (this.el) {
+            this.el.innerHTML = '';
+            this.el.classList.remove('glitch-effect');
+        }
+      },
+
+      hexId() { return '0x' + Math.floor(Math.random() * 4095).toString(16).toUpperCase().padStart(3, '0'); },
+      nodeId() { return Math.random().toString(16).slice(2, 5); },
+
+      showPhaseIntro(idx, isRetry = false) {
+        // 40% chance an anomaly hijacks the phase!
+        // ONLY roll the dice if we are NOT retrying a failed level!
+        if (!isRetry) {
+            this.isAnomaly = Math.random() > 0.6;
+        }
+        
+        // Dynamically build standard instructions based on active difficulty flags!
+        const flags = Game.difficulty.flags || {};
+        
+        let intro1Desc = 'One workstation is infected. Look for the blinking shield-alert icon. Clicking a safe machine counts as a mistake!';
+        if (flags.decoys) intro1Desc += ' <strong style="color:var(--warning)">Watch out for yellow System Updates (Decoys)!</strong>';
+
+        let intro2Desc = 'The infected node has active network links. Sever ALL infected links to quarantine it. Clicking safe node links counts as a mistake!';
+        if (flags.spread) intro2Desc += ' <strong style="color:var(--danger)">WARNING: The virus is actively spreading! Sever links quickly!</strong>';
+
+        let intro3Desc = 'Malicious packets are flooding the network. Click 5 malicious (red zap) packets to block them. Letting a malicious packet expire = mistake!';
+        if (flags.decoys) intro3Desc += ' <strong style="color:var(--purple)">Ignore purple Encrypted packets. Clicking them is a mistake!</strong>';
+
+        let intro4Desc = 'Review 5 system log files. Only ONE contains the attack signature: [CRITICAL]. Click the correct file. Wrong file = mistake!';
+        if (flags.spread) intro4Desc += ' <strong style="color:var(--warning)">Hackers planted fake critical logs. Read carefully!</strong>';
+
+        let intro5Desc = 'Restore 4 backup folders in chronological order (oldest first). Check the timestamps carefully. Wrong order = mistake!';
+        if (flags.glitch) intro5Desc += ' <strong style="color:var(--danger)">WARNING: System instability causing visual glitches. Do not lose focus!</strong>';
+
+        const intros = [
+          { title: 'Phase 1: DETECT', desc: intro1Desc, btn: 'Scan Network' },
+          { title: 'Phase 2: ISOLATE', desc: intro2Desc, btn: 'Begin Isolation' },
+          { title: 'Phase 3: BLOCK', desc: intro3Desc, btn: 'Start Firewall' },
+          { title: 'Phase 4: ANALYZE', desc: intro4Desc, btn: 'Open Logs' },
+          { title: 'Phase 5: RECOVER', desc: intro5Desc, btn: 'Begin Recovery' }
+        ];
+
+        let intro = intros[idx];
+
+        // OVERRIDE UI IF ANOMALY DETECTED
+        if (this.isAnomaly) {
+            intro = {
+                title: `<span style="color:hsl(var(--warning))"><i data-lucide="alert-triangle" style="display:inline-block;vertical-align:middle;margin-right:8px;margin-top:-4px;width:32px;height:32px;"></i> ANOMALY DETECTED</span>`,
+                desc: `<strong style="color:hsl(var(--warning))">UNEXPECTED INTERFERENCE!</strong> The hacker triggered a counter-measure during this phase. You must resolve this randomized anomaly before proceeding!`,
+                btn: 'Resolve Anomaly'
+            };
+        }
+
+        this.el.innerHTML = `
+          <div class="phase-intro" data-id="${this.nodeId()}">
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; display:flex; justify-content:center; align-items:center;">${intro.title}</h2>
+            <p>${intro.desc}</p>
+            <button class="btn btn-primary" id="btn-start-phase" data-id="${this.nodeId()}">${intro.btn}</button>
+          </div>
+        `;
+        document.getElementById('btn-start-phase').onclick = () => { 
+            if (this.isAnomaly) this.runAnomaly(idx);
+            else this[`run${this.phases[idx]}`](); 
+            if(window.lucide) lucide.createIcons(); 
+        };
+        if(window.lucide) lucide.createIcons();
+      },
+
+      // --- NEW SURGICAL MINI-GAME SYSTEM ---
+      runAnomaly(idx) {
+        Game.startTimer();
+        const diff = Game.difficulty.id;
+        
+        this.el.innerHTML = `
+            <h3 style="text-align:center; color:hsl(var(--warning)); margin-bottom:0.5rem">System Anomaly</h3>
+            <div id="anomaly-content" style="text-align:center; padding: 1rem; width:100%; height:100%;"></div>
+        `;
+        const content = document.getElementById('anomaly-content');
+
+        if (idx === 0) { 
+            // PHASE 1 ANOMALY: Signal Jammer (Moving Target)
+            let clicks = 0;
+            const required = diff === 'easy' ? 3 : (diff === 'medium' ? 4 : 5);
+            const speed = diff === 'easy' ? 800 : (diff === 'medium' ? 600 : 400);
+            
+            content.innerHTML = `
+                <p class="phase-hint">Click the jamming signal ${required} times to stabilize the scanner!</p>
+                <div style="position:relative;height:250px;max-width:500px;margin:0 auto;background:hsl(var(--bg));border:1px solid hsl(var(--border));overflow:hidden;border-radius:8px;">
+                    <div id="jammer-target" style="position:absolute;width:48px;height:48px;background:hsl(var(--warning));border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;">
+                        <i data-lucide="radio"></i>
+                    </div>
+                </div>
+            `;
+            const target = document.getElementById('jammer-target');
+            const moveTarget = () => {
+                target.style.left = Math.random() * 80 + '%';
+                target.style.top = Math.random() * 80 + '%';
+            };
+            moveTarget();
+            this.currentInterval = setInterval(moveTarget, speed);
+            target.onclick = () => {
+                clicks++;
+                target.style.background = 'hsl(var(--success))';
+                setTimeout(() => target.style.background = 'hsl(var(--warning))', 200);
+                if(clicks >= required) {
+                    clearInterval(this.currentInterval);
+                    Game.advancePhase();
+                }
+            };
+
+        } else if (idx === 1) { 
+            // PHASE 2 ANOMALY: Security Sequence (Click in Order)
+            const req = diff === 'easy' ? 3 : (diff === 'medium' ? 4 : 5);
+            content.innerHTML = `
+                <p class="phase-hint">Re-route power! Click the security nodes in exact numerical order (1 to ${req}).</p>
+                <div style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:2rem;" id="seq-box"></div>
+            `;
+            const box = document.getElementById('seq-box');
+            let expected = 1;
+            const nums = Array.from({length: req}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+            nums.forEach(n => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-secondary';
+                btn.style.width = '64px'; btn.style.height = '64px'; btn.style.fontSize = '1.5rem'; btn.style.borderRadius = '50%';
+                btn.textContent = n;
+                btn.onclick = () => {
+                    if(n === expected) {
+                        btn.className = 'btn btn-primary';
+                        btn.style.pointerEvents = 'none';
+                        expected++;
+                        if(expected > req) Game.advancePhase();
+                    } else {
+                        Game.recordMistake();
+                        btn.style.background = 'hsl(var(--danger))';
+                        setTimeout(() => btn.style.background = '', 500);
+                    }
+                };
+                box.appendChild(btn);
+            });
+
+        } else if (idx === 2) { 
+            // PHASE 3 ANOMALY: Firewall PIN (Higher/Lower)
+            const max = diff === 'easy' ? 10 : (diff === 'medium' ? 20 : 50);
+            const ans = Math.floor(Math.random() * max) + 1;
+            content.innerHTML = `
+                <p class="phase-hint">Guess the Hacker's Firewall PIN (1 to ${max}).</p>
+                <div id="cb-msg" style="margin:1rem 0;font-weight:bold;color:hsl(var(--accent));font-size:1.2rem;">Enter your guess:</div>
+                <input type="number" id="cb-input" class="mg-input" min="1" max="${max}"><br>
+                <button class="btn btn-primary" id="cb-btn">Submit PIN</button>
+            `;
+            document.getElementById('cb-btn').onclick = () => {
+                const inputEl = document.getElementById('cb-input');
+                if (!inputEl) return;
+                const val = parseInt(inputEl.value);
+                const msg = document.getElementById('cb-msg');
+                if (!msg) return;
+                
+                if(isNaN(val)) return;
+                if(val === ans) {
+                    msg.style.color = 'hsl(var(--success))'; msg.textContent = 'ACCESS GRANTED';
+                    setTimeout(() => Game.advancePhase(), 800);
+                } else {
+                    Game.recordMistake();
+                    msg.style.color = 'hsl(var(--warning))';
+                    msg.textContent = val < ans ? 'TOO LOW!' : 'TOO HIGH!';
+                }
+                inputEl.value = '';
+            };
+
+        } else if (idx === 3) { 
+            // PHASE 4 ANOMALY: Decrypt Word (Anagram)
+            const words = diff === 'easy' ? ['HACK', 'LOCK', 'SAFE'] : (diff === 'medium' ? ['VIRUS', 'CYBER', 'BLOCK'] : ['BREACH', 'PACKET', 'SECURE']);
+            const word = words[Math.floor(Math.random() * words.length)];
+            
+            // Fix: Keep scrambling until it is definitely NOT the original word!
+            let scrambled;
+            do {
+                scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+            } while (scrambled === word);
+            
+            content.innerHTML = `
+                <p class="phase-hint">Decrypt the hidden log keyword!</p>
+                <div style="font-family:var(--font-mono);font-size:3rem;letter-spacing:0.3em;margin:1.5rem 0;color:hsl(var(--purple));">${scrambled}</div>
+                <input type="text" id="dw-input" class="mg-input" style="text-transform:uppercase;" autocomplete="off"><br>
+                <button class="btn btn-primary" id="dw-btn">Decrypt String</button>
+            `;
+            document.getElementById('dw-btn').onclick = () => {
+                const inputEl = document.getElementById('dw-input');
+                if (!inputEl) return;
+                const val = inputEl.value.toUpperCase().trim();
+                if(val === word) {
+                    inputEl.style.borderColor = 'hsl(var(--success))';
+                    inputEl.style.color = 'hsl(var(--success))';
+                    setTimeout(() => Game.advancePhase(), 800);
+                } else {
+                    Game.recordMistake();
+                    inputEl.style.borderColor = 'hsl(var(--danger))';
+                    setTimeout(() => {
+                        const el = document.getElementById('dw-input');
+                        if(el) el.style.borderColor = 'hsl(var(--accent))';
+                    }, 500);
+                }
+            };
+
+        } else if (idx === 4) { 
+            // PHASE 5 ANOMALY: Data Alignment (Timing Slider)
+            const speed = diff === 'easy' ? 2.5 : (diff === 'medium' ? 1.8 : 1.2); // seconds per full swing
+            content.innerHTML = `
+                <p class="phase-hint">Data corrupt! Stop the recovery stream exactly in the GREEN zone!</p>
+                <div style="position:relative;width:100%;max-width:500px;height:50px;background:hsl(var(--bg));border:1px solid hsl(var(--border));margin:2.5rem auto;border-radius:25px;overflow:hidden;">
+                    <div style="position:absolute;left:40%;width:20%;height:100%;background:hsl(var(--success-muted));border-left:3px solid hsl(var(--success));border-right:3px solid hsl(var(--success));"></div>
+                    <div id="timing-cursor" style="position:absolute;left:0%;width:16px;height:100%;background:#fff;border-radius:8px;"></div>
+                </div>
+                <button class="btn btn-primary" id="timing-btn" style="padding: 1rem 2rem; font-size: 1.2rem;">LOCK DATA</button>
+            `;
+            
+            const cursor = document.getElementById('timing-cursor');
+            let pos = 0; let dir = 1;
+            
+            this.currentInterval = setInterval(() => {
+                if (Game.state !== 'PLAYING') return;
+                pos += dir * (100 / (speed * 60)); // Advance slider 60fps
+                if(pos >= 97) { dir = -1; pos = 97; }
+                if(pos <= 0) { dir = 1; pos = 0; }
+                cursor.style.left = pos + '%';
+            }, 16);
+            
+            document.getElementById('timing-btn').onclick = () => {
+                // The green zone is between 40% and 60%
+                if(pos >= 38 && pos <= 60) {
+                    clearInterval(this.currentInterval);
+                    cursor.style.background = 'hsl(var(--success))';
+                    cursor.style.boxShadow = '0 0 15px hsl(var(--success))';
+                    setTimeout(() => Game.advancePhase(), 800);
+                } else {
+                    Game.recordMistake();
+                    cursor.style.background = 'hsl(var(--danger))';
+                    setTimeout(() => cursor.style.background = '#fff', 500);
+                }
+            };
+        }
+        if(window.lucide) lucide.createIcons();
+      },
+
+      runDETECT() {
+        Game.startTimer();
+        const badIdx = Math.floor(Math.random() * 6);
+        let decoyIdx = -1;
+        
+        // Add Decoy for Medium/Hard
+        if (Game.difficulty.flags.decoys) {
+            do { decoyIdx = Math.floor(Math.random() * 6); } while (decoyIdx === badIdx);
+        }
+
+        this.el.innerHTML = `<h3 data-id="${this.nodeId()}" style="text-align:center; color:#fff; margin-bottom:0.5rem">Phase 1: DETECT</h3><p class="phase-hint" data-id="${this.nodeId()}">Find the infected workstation!</p><div class="phase-grid" id="phase-grid" data-id="${this.nodeId()}"></div>`;
+        const grid = document.getElementById('phase-grid');
+        for (let i = 0; i < 6; i++) {
+          const n = document.createElement('div');
+          n.className = 'phase-card workspace-node';
+          n.dataset.id = this.nodeId();
+          const hex = this.hexId();
+          
+          if (i === badIdx) {
+            n.innerHTML = `
+              <span class="pc-icon"><i data-lucide="monitor"></i></span>
+              <span class="pc-label">WS-${100 + i}</span>
+              <span class="pc-hex">${hex}</span>
+              <span class="pc-warn blink"><i data-lucide="shield-alert"></i> INFECTED</span>
+            `;
+          } else if (i === decoyIdx) {
+            n.innerHTML = `
+              <span class="pc-icon"><i data-lucide="monitor"></i></span>
+              <span class="pc-label">WS-${100 + i}</span>
+              <span class="pc-hex">[0xUPD]</span>
+              <span class="pc-warn yellow"><i data-lucide="download-cloud"></i> SYS UPDATE</span>
+            `;
+          } else {
+            n.innerHTML = `
+              <span class="pc-icon"><i data-lucide="monitor"></i></span>
+              <span class="pc-label">WS-${100 + i}</span>
+              <span class="pc-hex">${hex}</span>
+              <span class="pc-status ok"><i data-lucide="circle-check"></i> Online</span>
+            `;
+          }
+          
+          n.onclick = () => {
+            if (n.classList.contains('clicked')) return;
+            n.classList.add('clicked');
+            if (i === badIdx) {
+                Game.advancePhase();
+            } else {
+                Game.recordMistake();
+                if (i === decoyIdx) n.classList.add('folder-error'); // flash decoy
+            }
+          };
+          grid.appendChild(n);
+        }
+        if(window.lucide) lucide.createIcons();
+      },
+
+      runISOLATE() {
+        Game.startTimer();
+        this.el.innerHTML = `<h3 data-id="${this.nodeId()}" style="text-align:center; color:#fff; margin-bottom:0.5rem">Phase 2: ISOLATE</h3><p class="phase-hint" data-id="${this.nodeId()}">Sever all infected links!</p><div class="phase-grid" id="phase-grid" data-id="${this.nodeId()}"></div><div class="phase-progress" id="phase-progress" data-id="${this.nodeId()}">Links severed: 0/3</div>`;
+        const grid = document.getElementById('phase-grid');
+        const progress = document.getElementById('phase-progress');
+        
+        let severed = 0;
+        let totalInfected = 3; 
+        
+        const renderNode = (l, i, isInfected) => {
+            const hex = this.hexId();
+            l.dataset.infected = isInfected ? 'true' : 'false';
+            if (isInfected) {
+                l.innerHTML = `
+                  <span class="link-icon"><i data-lucide="share-2"></i></span>
+                  <span class="link-label">Link ${i}</span>
+                  <span class="link-hex">${hex}</span>
+                  <span class="link-status danger"><i data-lucide="shield-alert"></i> Infected Node</span>
+                `;
+            } else {
+                l.innerHTML = `
+                  <span class="link-icon"><i data-lucide="share-2"></i></span>
+                  <span class="link-label">Link ${i}</span>
+                  <span class="link-hex">${hex}</span>
+                  <span class="link-status ok"><i data-lucide="circle-check"></i> Safe Node</span>
+                `;
+            }
+        };
+
+        for (let i = 0; i < 6; i++) {
+          const l = document.createElement('div');
+          l.className = 'phase-card workspace-node';
+          l.dataset.id = this.nodeId();
+          renderNode(l, i, i < 3); // First 3 are infected initially
+          
+          l.onclick = () => {
+            if (l.classList.contains('severed')) return;
+            l.classList.add('severed');
+            
+            if (l.dataset.infected === 'true') {
+              severed++;
+              progress.textContent = `Links severed: ${severed}/${totalInfected}`;
+              if (severed >= totalInfected) Game.advancePhase();
+            } else {
+              Game.recordMistake();
+            }
+          };
+          grid.appendChild(l);
+        }
+
+        // HARD MODE: Spreading Virus
+        if (Game.difficulty.flags.spread) {
+            this.virusSpreadInterval = setInterval(() => {
+                if (Game.state !== 'PLAYING') return;
+                
+                // Find nodes that are currently safe and not severed
+                const safeNodes = Array.from(grid.children).filter(node => 
+                    node.dataset.infected === 'false' && !node.classList.contains('severed')
+                );
+                
+                if (safeNodes.length > 0) {
+                    const victim = safeNodes[Math.floor(Math.random() * safeNodes.length)];
+                    // Re-render as infected
+                    renderNode(victim, Array.from(grid.children).indexOf(victim), true);
+                    totalInfected++;
+                    progress.textContent = `Links severed: ${severed}/${totalInfected}`;
+                    if(window.lucide) lucide.createIcons();
+                }
+            }, 3500); // Spreads every 3.5 seconds
+        }
+
+        if(window.lucide) lucide.createIcons();
+      },
+
+      runBLOCK() {
+        Game.startTimer();
+        this.el.innerHTML = `<h3 data-id="${this.nodeId()}" style="text-align:center; color:#fff; margin-bottom:0.5rem">Phase 3: BLOCK</h3><p class="phase-hint" data-id="${this.nodeId()}">Click 5 malicious packets. Let safe/encrypted pass!</p><div id="packet-stream" data-id="${this.nodeId()}"></div><div class="phase-progress" id="phase-progress" data-id="${this.nodeId()}">Blocked: 0/5</div>`;
+        const stream = document.getElementById('packet-stream');
+        const progress = document.getElementById('phase-progress');
+        let blocked = 0;
+        
+        // --- NEW: Streak Trackers to prevent extremes ---
+        let consecutiveMalicious = 0;
+        let consecutiveSafe = 0;
+        
+        this.currentInterval = setInterval(() => {
+          if (Game.state !== 'PLAYING') return;
+          
+          let isBad = Math.random() > 0.5;
+
+          // --- NEW: Enforce limits on streaks ---
+          if (consecutiveSafe >= 2) {
+              isBad = true; // Force malicious to prevent long safe streams
+          } else if (consecutiveMalicious >= 2) {
+              isBad = false; // Force safe to prevent long malicious streams
+          }
+
+          // Update our streak trackers
+          if (isBad) {
+              consecutiveMalicious++;
+              consecutiveSafe = 0;
+          } else {
+              consecutiveSafe++;
+              consecutiveMalicious = 0;
+          }
+
+          let pType = isBad ? 'malicious' : 'safe';
+          
+          // Add Encrypted Decoy for Medium/Hard (only applies to safe packets)
+          if (!isBad && Game.difficulty.flags.decoys && Math.random() > 0.4) {
+              pType = 'encrypted';
+          }
+
+          const p = document.createElement('div');
+          p.className = `phase-card workspace-node packet-card ${pType}`;
+          p.dataset.id = this.nodeId();
+          const hex = this.hexId();
+          
+          let icon = 'zap';
+          let label = 'SAFE';
+          if (pType === 'malicious') { label = 'MALICIOUS'; }
+          if (pType === 'encrypted') { icon = 'lock'; label = 'ENCRYPTED'; }
+
+          p.innerHTML = `
+            <span class="pkt-icon"><i data-lucide="${icon}"></i></span>
+            <span class="pkt-label">${label}</span>
+            <span class="pkt-hex">${hex}</span>
+          `;
+          
+          p.onclick = () => {
+            if (p.classList.contains('handled')) return;
+            p.classList.add('handled');
+            if (pType === 'malicious') {
+              blocked++;
+              progress.textContent = `Blocked: ${blocked}/5`;
+              p.classList.add('pkt-blocked');
+              if (blocked >= 5) { clearInterval(this.currentInterval); this.currentInterval = null; Game.advancePhase(); }
+            } else {
+              Game.recordMistake();
+              p.classList.add('pkt-error');
+            }
+            setTimeout(() => p.remove(), 400);
+          };
+          
+          stream.appendChild(p);
+          const timeout = setTimeout(() => {
+            if (p.parentNode && !p.classList.contains('handled')) {
+              // Only penalize if they let a MALICIOUS packet expire
+              if (pType === 'malicious') Game.recordMistake();
+              p.remove();
+            }
+          }, 3000);
+          p._timeout = timeout;
+          if(window.lucide) lucide.createIcons();
+        }, 900);
+      },
+
+      runANALYZE() {
+        Game.startTimer();
+        
+        let files = [
+          { name: 'syslog_auth.log', content: 'pam_unix(sshd:session): session opened for user admin', isBad: false },
+          { name: 'network_traffic.pcap', content: 'TCP 192.168.1.10:443 -> 10.0.0.55:8080 [ACK] Seq=1024', isBad: false },
+          { name: 'fw_rules.conf', content: 'iptables -A INPUT -p tcp --dport 22 -j ACCEPT (rule #47)', isBad: false },
+          { name: 'kernel_messages.log', content: '[CRITICAL] Root access granted to UNKNOWN_IP 203.0.113.66 via sudo exploit', isBad: true },
+          { name: 'cron_schedule.log', content: 'CRON[12847]: (root) CMD (/usr/local/bin/backup.sh --full)', isBad: false }
+        ];
+
+        // HARD MODE: Swap a safe log for a fake CRITICAL decoy
+        if (Game.difficulty.flags.spread) {
+             files[0] = { name: 'printer_spool.log', content: '[CRITICAL] Office Printer Out of Cyan Ink. Requires attention.', isBad: false };
+        }
+
+        const shuffled = [...files].sort(() => Math.random() - 0.5);
+        this.el.innerHTML = `<h3 data-id="${this.nodeId()}" style="text-align:center; color:#fff; margin-bottom:0.5rem">Phase 4: ANALYZE</h3><p class="phase-hint" data-id="${this.nodeId()}">Find the true attack signature!</p><div class="log-list" id="log-list" data-id="${this.nodeId()}"></div>`;
+        const list = document.getElementById('log-list');
+        
+        shuffled.forEach(f => {
+          const ts = this.randomTimestamp();
+          const entry = document.createElement('div');
+          entry.className = 'phase-card workspace-node log-entry';
+          entry.dataset.id = this.nodeId();
+          entry.innerHTML = `
+            <div class="log-meta"><span class="log-ts">${ts}</span><span class="log-file"><i data-lucide="terminal"></i> ${f.name}</span></div>
+            <div class="log-body">${f.content}</div>
+          `;
+          entry.onclick = () => {
+            if (entry.classList.contains('clicked')) return;
+            entry.classList.add('clicked');
+            f.isBad ? Game.advancePhase() : Game.recordMistake();
+          };
+          list.appendChild(entry);
+        });
+        if(window.lucide) lucide.createIcons();
+      },
+
+      runRECOVER() {
+        Game.startTimer();
+        const baseDate = new Date(2026, 0, 1);
+        const backups = [];
+        for (let i = 0; i < 4; i++) {
+          const d = new Date(baseDate.getTime() + Math.random() * 150 * 24 * 60 * 60 * 1000);
+          backups.push({ id: i, date: d, label: `Backup_${d.toISOString().slice(0, 10)}` });
+        }
+        const sorted = [...backups].sort((a, b) => a.date - b.date);
+        const shuffled = [...backups].sort(() => Math.random() - 0.5);
+        let expected = 0;
+        this.el.innerHTML = `<h3 data-id="${this.nodeId()}" style="text-align:center; color:#fff; margin-bottom:0.5rem">Phase 5: RECOVER</h3><p class="phase-hint" data-id="${this.nodeId()}">Click backups from OLDEST to NEWEST</p><div class="phase-grid" id="phase-grid" data-id="${this.nodeId()}"></div><div class="phase-progress" id="phase-progress" data-id="${this.nodeId()}">Restored: 0/4</div>`;
+        const grid = document.getElementById('phase-grid');
+        const progress = document.getElementById('phase-progress');
+        
+        // HARD MODE: Glitch the screen randomly
+        if (Game.difficulty.flags.glitch) {
+            this.glitchInterval = setInterval(() => {
+                if (Game.state !== 'PLAYING') return;
+                this.el.classList.add('glitch-effect');
+                setTimeout(() => this.el.classList.remove('glitch-effect'), 250); // Glitch flash
+            }, 4000);
+        }
+
+        shuffled.forEach(b => {
+          const f = document.createElement('div');
+          f.className = 'phase-card workspace-node';
+          f.dataset.id = this.nodeId();
+          const hex = this.hexId();
+          f.innerHTML = `
+            <span class="folder-icon"><i data-lucide="folder-open"></i></span>
+            <span class="folder-name">${b.label}</span>
+            <span class="folder-date">${b.date.toLocaleString()}</span>
+            <span class="folder-hex">${hex}</span>
+          `;
+          f.onclick = () => {
+            if (f.classList.contains('restored')) return;
+            
+            if (b.id === sorted[expected].id) {
+              f.classList.add('restored');
+              expected++;
+              progress.textContent = `Restored: ${expected}/4`;
+              f.innerHTML = `
+                <span class="folder-icon"><i data-lucide="folder-check"></i></span>
+                <span class="folder-name">${b.label}</span>
+                <span class="folder-restored"><i data-lucide="check"></i> RESTORED</span>
+              `;
+              // BUG FIX: Call advancePhase() instead of triggerVictory() so the real-world connection shows up!
+              if (expected >= 4) Game.advancePhase();
+            } else {
+              Game.recordMistake();
+              f.classList.add('folder-error');
+              setTimeout(() => f.classList.remove('folder-error'), 800);
+            }
+            if(window.lucide) lucide.createIcons();
+          };
+          grid.appendChild(f);
+        });
+        if(window.lucide) lucide.createIcons();
+      },
+
+      randomTimestamp() {
+        const y = 2026, m = Math.floor(Math.random() * 5) + 1, d = Math.floor(Math.random() * 28) + 1;
+        const h = Math.floor(Math.random() * 24), mi = Math.floor(Math.random() * 60), s = Math.floor(Math.random() * 60);
+        return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')} ${String(h).padStart(2, '0')}:${String(mi).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+    };
+
+    const TimerDisplay = {
+        element: null,
+        warningThreshold: 10,
+        init(elementId) { this.element = document.getElementById(elementId); },
+        update(seconds) {
+            if (!this.element) return;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            this.element.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+            if (seconds <= this.warningThreshold) {
+                this.element.classList.add('timer-warning');
+            } else {
+                this.element.classList.remove('timer-warning');
+            }
+        },
+        reset() {
+            if (!this.element) return;
+            this.element.textContent = '0:00';
+            this.element.classList.remove('timer-warning');
+        },
+        setThreshold(seconds) { this.warningThreshold = seconds; }
+    };
+
+    class GameLoop {
+        constructor(durationSeconds, onTick, onComplete) {
+            this.duration = durationSeconds;
+            this.timeRemaining = durationSeconds;
+            this.onTick = onTick;
+            this.onComplete = onComplete;
+            this.intervalId = null;
+            this.state = 'STOPPED';
+        }
+        start() {
+            this.state = 'RUNNING';
+            this.intervalId = setInterval(() => {
+                this.timeRemaining = Math.max(0, this.timeRemaining - 1);
+                this.onTick(this.timeRemaining, this.getProgress());
+                if (this.timeRemaining <= 0) {
+                    this.stop();
+                    this.onComplete();
+                }
+            }, 1000);
+        }
+        stop() {
+            if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
+            this.state = 'STOPPED';
+        }
+        getProgress() { return (this.duration - this.timeRemaining) / this.duration; }
+    }
+
+    const Game = {
+      difficulty: null,
+      phase: 0,
+      state: 'INIT',
+      loop: null,
+      mistakes: 0,
+      score: 0,
+
+      init() {
+        GameBoard.init();
+        TimerDisplay.init('hud-timer');
+        this.bindModalButtons();
+        DifficultySelector.init('difficulty-container');
+      },
+
+      bindModalButtons() {
+        document.getElementById('modal-retry')?.addEventListener('click', () => this.retry());
+        document.getElementById('modal-menu')?.addEventListener('click', () => this.returnToMenu());
+        document.getElementById('modal-next')?.addEventListener('click', () => this.nextDifficulty());
+        document.getElementById('modal-next-phase')?.addEventListener('click', () => this.nextPhase());
+      },
+
+      nextDifficulty() {
+        document.getElementById('game-modal').classList.add('hidden');
+        if (this.difficulty.id === 'easy') this.start('medium');
+        else if (this.difficulty.id === 'medium') this.start('hard');
+      },
+      
+      nextPhase() {
+        document.getElementById('game-modal').classList.add('hidden');
+        // If they just finished Phase 5, trigger the final victory screen!
+        if (this.phase >= 4) {
+            this.triggerVictory();
+        } else {
+            this.loadPhase(this.phase + 1);
+        }
+      },
+
+      start(diffId) {
+        this.difficulty = Difficulty[diffId.toUpperCase()] || Difficulty.EASY;
+        this.phase = 0;
+        this.state = 'LOADING';
+        this.mistakes = 0;
+        this.score = 0;
+
+        document.getElementById('game-briefing').classList.add('hidden');
+        document.getElementById('game-play').classList.remove('hidden');
+
+        this.loadPhase(0);
+      },
+
+      loadPhase(idx, isRetry = false) {
+        this.phase = idx;
+        if (this.loop) { this.loop.stop(); this.loop = null; }
+        TimerDisplay.reset();
+        TimerDisplay.update(this.difficulty.time);
+        this.updateHUD();
+        GameBoard.loadPhase(idx, isRetry);
+      },
+
+      startTimer() {
+        if (this.loop) this.loop.stop();
+        this.state = 'PLAYING';
+        this.loop = new GameLoop(this.difficulty.time, (rem) => {
+          TimerDisplay.update(rem);
+        }, () => this.triggerGameOver());
+        this.loop.start();
+      },
+
+      advancePhase() {
+        const phasePoints = 500 * this.difficulty.mult;
+        this.score += phasePoints;
+        
+        // Dynamically add XP right when the phase is finished!
+        AppState.totalScore = (AppState.totalScore || 0) + phasePoints;
+        AppState.save();
+        RankSystem.updateUI();
+
+        // Always show the educational connection, even for the last phase!
+        this.showPhaseComplete(this.phase);
+      },
+
+      recordMistake() {
+        this.mistakes++;
+        this.updateHUD();
+        if (this.mistakes >= this.difficulty.mistakes) this.triggerGameOver();
+      },
+
+      triggerVictory() {
+        const timeBonus = this.loop ? this.loop.timeRemaining * 10 * this.difficulty.mult : 0;
+        if (this.loop) { this.loop.stop(); this.loop = null; }
+        GameBoard.clear();
+        this.state = 'VICTORY';
+        
+        // Add only the time bonus to global AppState score (phase points were already added dynamically)
+        AppState.totalScore = (AppState.totalScore || 0) + timeBonus;
+        AppState.save();
+        RankSystem.updateUI();
+
+        const finalScore = this.score + timeBonus;
+        this.showModal(true, finalScore);
+      },
+
+      triggerGameOver() {
+        if (this.loop) { this.loop.stop(); this.loop = null; }
+        GameBoard.clear();
+        this.state = 'GAMEOVER';
+        this.showModal(false, this.score);
+      },
+
+      updateHUD() {
+        document.getElementById('hud-stage').textContent = `${this.phase + 1}/5`;
+        document.getElementById('hud-mistakes').textContent = `${this.mistakes}/${this.difficulty.mistakes}`;
+        
+        const scoreEl = document.getElementById('hud-score');
+        if (scoreEl.textContent !== this.score.toString()) {
+            scoreEl.textContent = this.score;
+            // Pop the HUD score to visually show points being banked
+            scoreEl.classList.remove('score-update');
+            void scoreEl.offsetWidth; 
+            scoreEl.classList.add('score-update');
+        }
+      },
+
+      showPhaseComplete(phaseIdx) {
+        if (this.loop) { this.loop.stop(); } // Pause the timer!
+        
+        const modal = document.getElementById('game-modal');
+        const title = document.getElementById('modal-title');
+        const message = document.getElementById('modal-message');
+        const statsEl = document.getElementById('modal-stats');
+        const rankInfoEl = document.getElementById('modal-rank-info');
+        
+        const retryBtn = document.getElementById('modal-retry');
+        const nextDiffBtn = document.getElementById('modal-next');
+        const nextPhaseBtn = document.getElementById('modal-next-phase');
+        const menuBtn = document.getElementById('modal-menu');
+
+        // Dynamic, phase-centric facts based on difficulty!
+        const factBank = {
+            easy: [
+                [ // Phase 1: Detect
+                    "Real cyber experts use special alarms to spot hackers sneaking around, just like a smoke detector spots a fire!",
+                    "Defenders look for digital fingerprints left behind when someone tries to break into a computer."
+                ],
+                [ // Phase 2: Isolate
+                    "If a computer gets a virus, we unplug it fast so the sickness doesn't spread to other computers!",
+                    "Cyber pros put infected computers in 'timeout' so they can't talk to the rest of the network."
+                ],
+                [ // Phase 3: Block
+                    "A firewall is like a digital bouncer. It kicks out the bad hackers but lets the good data in!",
+                    "Defenders build invisible digital walls to block bad guys from stealing our games and homework."
+                ],
+                [ // Phase 4: Analyze
+                    "Every action on a computer leaves a footprint. Cyber defenders act like detectives tracking down the hacker!",
+                    "Computers keep a diary called 'logs'. We read the diary to see exactly how the bad guy got in."
+                ],
+                [ // Phase 5: Recover
+                    "Backups are like a magical 'undo' button! They let us put everything back to normal after an attack.",
+                    "Just like saving a video game, backups let us reload our important files if they get deleted!"
+                ]
+            ],
+            medium: [
+                [ // Phase 1: Detect
+                    "Hackers sometimes hide bad programs inside fake updates. Cyber experts have to look closely to find the real threat!",
+                    "Not all warnings are real attacks. We have to separate the real hackers from the fake decoys."
+                ],
+                [ // Phase 2: Isolate
+                    "Cutting the connection stops a hacker from remote-controlling a computer from far away.",
+                    "Quarantining a computer protects the main server where all the really important data lives."
+                ],
+                [ // Phase 3: Block
+                    "Hackers use encrypted packets to hide their bad code, but good firewalls can still block them!",
+                    "We drop malicious packets so the hacker's computer can't talk to our network anymore."
+                ],
+                [ // Phase 4: Analyze
+                    "Cyber analysts read network traffic logs to find the exact IP address the attacker used.",
+                    "Hackers try to erase their tracks, but system logs almost always catch their mistakes!"
+                ],
+                [ // Phase 5: Recover
+                    "Restoring from a backup means we don't have to pay hackers if they try to lock our files!",
+                    "We always restore the oldest clean backup first to make sure no virus is left behind."
+                ]
+            ],
+            hard: [
+                [ // Phase 1: Detect
+                    "Advanced malware tries to turn off our alarms. Defenders must find them before they break the whole system!",
+                    "Zero-day threats are brand new attacks no one has seen before. We have to spot them by how they act."
+                ],
+                [ // Phase 2: Isolate
+                    "Computer worms can spread across a network in seconds. We have to isolate them faster than they can copy themselves!",
+                    "Severing links quickly prevents a 'botnet' from taking over the whole school's network."
+                ],
+                [ // Phase 3: Block
+                    "During a flood attack, hackers send millions of fake packets. A strong firewall drops them all!",
+                    "Intrusion Prevention Systems (IPS) automatically zap dangerous packets before they even reach our computers."
+                ],
+                [ // Phase 4: Analyze
+                    "Hackers sometimes plant fake logs to confuse us. Real incident responders know how to spot the lies!",
+                    "Finding the 'Root Access' log tells us the hacker tried to give themselves the ultimate admin powers."
+                ],
+                [ // Phase 5: Recover
+                    "Even when the system is glitching and crashing, incident responders stay calm and follow the recovery protocol.",
+                    "Disaster recovery plans save companies millions of dollars by getting systems back online safely and quickly."
+                ]
+            ]
+        };
+
+        // NEW: Special facts that ONLY play if an anomaly occurred during this phase!
+        const anomalyFacts = [
+            "Hackers sometimes use signal jammers to hide their tracks. Defenders have to constantly tune their scanners to cut through the noise!", // Phase 1: Jammer
+            "When a network is under attack, incident responders often have to manually re-route power and data through backup security nodes to keep the system alive!", // Phase 2: Sequence
+            "Hackers try to guess passwords using 'Brute Force' attacks. We countered their attack by resetting the firewall's secret PIN before they could get in!", // Phase 3: PIN Code
+            "Advanced malware scrambles its own code so antivirus scanners can't read it. Defenders have to decrypt the hidden message to understand how to stop it!", // Phase 4: Anagram
+            "Data recovery isn't just copying files; sometimes data streams get out of sync during an attack. Responders have to perfectly align the blocks to prevent corruption!" // Phase 5: Slider
+        ];
+
+        let displayFact = "";
+        let connectionTitle = "Real-World Connection:";
+        let connectionColor = "hsl(var(--accent))";
+
+        if (GameBoard.isAnomaly) {
+            // Show the special anomaly fact!
+            displayFact = anomalyFacts[phaseIdx];
+            connectionTitle = "Anomaly Defeated:";
+            connectionColor = "hsl(var(--warning))";
+        } else {
+            // Show the standard randomized facts
+            const currentDiffLevel = this.difficulty.id || 'easy';
+            const possibleFacts = factBank[currentDiffLevel][phaseIdx];
+            displayFact = possibleFacts[Math.floor(Math.random() * possibleFacts.length)];
+        }
+
+        title.innerHTML = '<i data-lucide="check-circle" style="width:48px;height:48px;margin-right:12px;"></i> STAGE CLEARED!';
+        title.className = 'text-success';
+
+        message.innerHTML = `
+            <div style="font-size:1.1rem; line-height: 1.5; color: #fff; background: hsl(230 20% 15%); padding: 1.5rem; border-radius: 12px; border-left: 4px solid ${connectionColor}; text-align: left; margin-bottom: 1.5rem;">
+                <strong style="color: ${connectionColor}; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.05em; display: block; margin-bottom: 0.5rem;">${connectionTitle}</strong>
+                ${displayFact}
+            </div>
+        `;
+
+        // Hide end-game stats during intermediate phases
+        statsEl.style.display = 'none';
+        if (rankInfoEl) rankInfoEl.style.display = 'none';
+
+        // Swap buttons to ONLY show "Next Stage" or "Finish Mission"
+        retryBtn.style.display = 'none';
+        nextDiffBtn.style.display = 'none';
+        menuBtn.style.display = 'none';
+        nextPhaseBtn.style.display = 'inline-flex';
+        
+        if (phaseIdx >= 4) {
+            nextPhaseBtn.innerHTML = '<i data-lucide="flag"></i> Finish Mission';
+        } else {
+            nextPhaseBtn.innerHTML = '<i data-lucide="arrow-right"></i> Next Stage';
+        }
+
+        modal.classList.remove('hidden');
+        if(window.lucide) lucide.createIcons();
+      },
+
+      showModal(success, finalScore) {
+        const modal = document.getElementById('game-modal');
+        const title = document.getElementById('modal-title');
+        const message = document.getElementById('modal-message');
+        const statsEl = document.getElementById('modal-stats');
+        const rankInfoEl = document.getElementById('modal-rank-info');
+        
+        const retryBtn = document.getElementById('modal-retry');
+        const nextBtn = document.getElementById('modal-next');
+        const nextPhaseBtn = document.getElementById('modal-next-phase');
+        const menuBtn = document.getElementById('modal-menu');
+
+        const currentRank = RankSystem.getRank();
+        const currentXP = AppState.totalScore || 0;
+        const nextRank = RankSystem.getNextRank();
+
+        // Ensure stats and menu buttons are visible again
+        statsEl.style.display = 'flex';
+        if (rankInfoEl) rankInfoEl.style.display = 'block';
+        if (nextPhaseBtn) nextPhaseBtn.style.display = 'none';
+        if (menuBtn) menuBtn.style.display = 'inline-flex';
+
+        if (success) {
+          title.innerHTML = '<i data-lucide="trophy" style="width:48px;height:48px;margin-right:12px"></i> MISSION COMPLETE!';
+          title.className = 'text-success';
+          
+          // Removed the real-world connection from here since they already saw it!
+          message.innerHTML = `
+            <div style="margin-bottom: 1.5rem; font-size: 1.2rem; color: hsl(240 5% 85%);">You secured the network! Great job, Incident Responder!</div>
+          `;
+          
+          statsEl.innerHTML = `<div class="modal-stat"><span>Final Score</span><strong>${finalScore}</strong></div><div class="modal-stat"><span>Difficulty</span><strong>${this.difficulty.name}</strong></div>`;
+          
+          if (this.difficulty.id !== 'hard') {
+            nextBtn.style.display = 'inline-flex';
+          } else {
+            nextBtn.style.display = 'none';
+          }
+        } else {
+          title.innerHTML = '<i data-lucide="x-octagon" style="width:48px;height:48px;margin-right:12px"></i> MISSION FAILED';
+          title.className = 'text-danger';
+          message.innerHTML = 'Too many mistakes or time ran out. Try again!';
+          statsEl.innerHTML = `<div class="modal-stat"><span>Phase Reached</span><strong>${this.phase + 1}/5</strong></div><div class="modal-stat"><span>Score</span><strong>${this.score}</strong></div>`;
+          nextBtn.style.display = 'none';
+        }
+
+        // Generate Progress Bar HTML
+        let progressHtml = '';
+        if (nextRank) {
+            const levelTotalXP = nextRank.threshold - nextRank.base;
+            const levelCurrentXP = currentXP - nextRank.base;
+            const progressPct = Math.min(100, Math.max(0, (levelCurrentXP / levelTotalXP) * 100));
+
+            // Increased top margin and gap around progress text
+            progressHtml = `
+                <div style="margin-top: 1.75rem; text-align: left;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.95rem; margin-bottom: 0.75rem;">
+                        <span style="color: hsl(var(--text-muted))">Next: <strong style="color: hsl(0 0% 90%)">${nextRank.name}</strong></span>
+                        <span style="color: hsl(var(--text-muted))">${levelCurrentXP} / ${levelTotalXP} XP</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: hsl(var(--bg)); border-radius: 4px; overflow: hidden; border: 1px solid hsl(var(--border));">
+                        <div style="width: ${progressPct}%; height: 100%; background: linear-gradient(90deg, hsl(var(--accent-hover)), hsl(var(--accent))); border-radius: 4px; transition: width 1s ease-out;"></div>
+                    </div>
+                </div>
+            `;
+        } else {
+            progressHtml = `<div style="margin-top: 1.75rem; font-size: 1rem; color: hsl(var(--accent)); text-align: center;"><strong>★ MAXIMUM RANK ACHIEVED ★</strong></div>`;
+        }
+
+        // Show their global progression cleanly inside the modal
+        if (rankInfoEl) {
+            // Increased the margin-bottom between the Total XP and Current Rank lines
+            rankInfoEl.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <span style="color: hsl(var(--text-muted))">Total XP:</span> 
+                    <strong style="color: #fff; font-size: 1.35rem;">${currentXP}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: hsl(var(--text-muted))">Current Rank:</span> 
+                    <strong style="color: hsl(${currentRank.color}); display: inline-flex; align-items: center; gap: 0.4rem;">
+                        <i data-lucide="${currentRank.icon}" style="width:18px;height:18px;"></i> ${currentRank.name}
+                    </strong>
+                </div>
+                ${progressHtml}
+            `;
+        }
+
+        retryBtn.style.display = 'inline-flex';
+        modal.classList.remove('hidden');
+        if(window.lucide) lucide.createIcons();
+      },
+
+      retry() {
+        document.getElementById('game-modal').classList.add('hidden');
+        this.mistakes = 0; 
+        // Pass "true" to loadPhase so it knows we are retrying!
+        this.loadPhase(this.phase, true);
+      },
+      
+      returnToMenu() {
+        document.getElementById('game-modal').classList.add('hidden');
+        document.getElementById('game-play').classList.add('hidden');
+        document.getElementById('game-briefing').classList.remove('hidden');
+      }
+    };
+
+    const App = {
+        init() {
+            AppState.load();
+            RankSystem.updateUI(); // Load rank on boot
+            HackerMusic.init();    // Load music button
+            Navigation.init();
+            LearnModule.init();
+            Game.init();
+            this.bindNavigationButtons();
+            this.showPage(AppState.currentPage);
+        },
+        isGameUnlocked() {
+            // Re-activated! Players must complete all topics before playing.
+            return TOPICS.every((_, i) => AppState.learn.topicProgress[i] === true);
+        },
+        showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            const page = document.getElementById(pageId);
+            const tab = document.querySelector(`.nav-tab[data-page="${pageId}"]`);
+            if (page) page.classList.add('active');
+            if (tab) tab.classList.add('active');
+            
+            // LOGIC TO LOCK THE GAME
+            if (pageId === 'game') {
+                const lockedEl = document.getElementById('game-locked');
+                const briefingEl = document.getElementById('game-briefing');
+                const playEl = document.getElementById('game-play');
+                
+                if (!this.isGameUnlocked()) {
+                    lockedEl.classList.remove('hidden');
+                    briefingEl.classList.add('hidden');
+                    playEl.classList.add('hidden');
+                } else {
+                    lockedEl.classList.add('hidden');
+                    // Only show briefing if we aren't currently mid-game
+                    if (Game.state === 'INIT' || Game.state === 'GAMEOVER' || Game.state === 'VICTORY') {
+                        briefingEl.classList.remove('hidden');
+                        playEl.classList.add('hidden');
+                    }
+                }
+            }
+
+            AppState.currentPage = pageId;
+            AppState.save();
+        },
+        bindNavigationButtons() {
+            document.querySelectorAll('[data-navigate]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = btn.getAttribute('data-navigate');
+                    Navigation.navigateTo(target);
+                });
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.getAttribute('data-page');
+                    // FIX: Only navigate if the button actually has a target page! (Ignores the music button)
+                    if (target) {
+                        Navigation.navigateTo(target);
+                    }
+                });
+            });
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => { 
+        App.init(); 
+        if(window.lucide) lucide.createIcons(); 
+    });
     </script>
 </body>
 </html>
